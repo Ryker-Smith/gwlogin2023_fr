@@ -1,0 +1,40 @@
+package net.fachtnaroe.gwlogin2023_fr;
+
+class ui_txt {
+    public String language;
+    static final String STATUS_POSSIBLES = "Status\n(0/4/8) ";
+    static final String MAIN_HEAD = "Update EEPROM Settings";
+    static final String STATUS_ATTEMPTS_COUNT = "Retry\nattempts ";
+    static final String DEVICE_NAME = "Device Name";
+    static final String FIND_DEVICE = "Find my device";
+    static final String CONNECT_DEVICE = "Connect to device";
+    static final String READ_DEVICE = "Read Sensor Unit config";
+    static final String WRITE_DEVICE = "Write Sensor Unit config";
+    static final String CONNECTION_ATTEMPT = "Connection attempt to";
+    static final String CONNECTION_SENDING = "Sending";
+    static final String CONNECTION_RECEIVED = "Received";
+    static final String CONNECTION_SUCCESS = "Successfully connected to unit";
+    static final String CONNECTION_FAILURE = "Could not connect to Sensor Unit";
+    static final String CONNECT_BEFORE_REBOOT = "Connect to device before attempting reboot";
+    static final String CONFIGURATION_REQUIRED="Configuration of the SensorUnit is required";
+    static final String REBOOT_ATTEMPT = "Attempting Sensor Unit reboot";
+    static final String REBOOT_NOW = "Sensor Unit is now rebooting";
+    static final String READ_SUCCESS = "Successfully read from Sensor Unit";
+    static final String WRITE_SUCCESS = "Successfully wrote to Sensor Unit";
+    static final String ERR_NOT_IMPLEMENTED = "Not Implemented";
+    static final String ERR_422 = "JSON Error 422";
+    static final String ERROR_PREFIX = "Error status code is ";
+    static final String MESSAGE_HEADING_ERROR = "Problem";
+    static final String NEXT_REBOOT_FOR_CHANGES = "Your changes will take effect when the Sensor Unit is restarted";
+    static final String MESSAGE_HEADING = "Information";
+    static final String BUTTON_OK = "OK";
+    static final String WIFI_PSK = "PSK";
+    static final String WIFI_SSID = "SSID";
+    static final String WIFI_IPv4 = "IPv4";
+    static final String URL_TIMED_OUT = "Timed-out connecting to ";
+    static final String NO_SHOW_AGAIN = "Don't show again";
+    static final String DISCLAIMER="This App is offered without any medical or any other guarantee.<br><br>Use this at your own risk, and always use your own best judgement as to what is safe.";
+    static final String HINT_DEVICE_NAME="Name of the CO2 unit";
+    static final String MSG_REQUIRE_DEVICE_NAME="Please provide the name of the CO2 Sensor Unit.<br><br>That's the same as the name of the device Wi-Fi hot-spot the Unit created to allow you to provide details of your local Wi-Fi network.";
+    static final String WARN_DANGER = "Danger";
+}
