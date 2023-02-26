@@ -20,87 +20,97 @@ import org.json.JSONObject;
 public class LoginScreen extends Form implements HandlesEventDispatching {
 
     private
-    HorizontalArrangement hzUser,hzPass;
-    VerticalArrangement mainArrangement;
+    HorizontalArrangement hzUser,hzPass, grid;
+    VerticalArrangement mainArrangement, gridCenter;
     TextBox usernameBox;
     PasswordTextBox passwordBox;
     Button btnLogin, btnRegister;
     Label padTop, padBottom, padBetweenLoginAndRegister, lblU, padBetween, lblP, padAboveLogin;
-    Label lblTitleAtTop;
+    Label lblTitleAtTop, gridPadLeft, getGridPadRight;
     Web webAuthenticate;
     JSONObject jsonCredentials=new JSONObject();
+    StatusBarTools statusBar;
 
     protected void $define() {
 
         this.Sizing("Responsive");
         mainArrangement=new VerticalArrangement(this);
         mainArrangement.WidthPercent(100);
-        mainArrangement.HeightPercent(100);
+        mainArrangement.Height(LENGTH_FILL_PARENT);
         mainArrangement.BackgroundColor(colors.MAIN_BACKGROUND);
         mainArrangement.AlignHorizontal(Component.ALIGNMENT_CENTER);
+        statusBar=new StatusBarTools(mainArrangement);
+        statusBar.BGTransparentColor("#00000000");
+        statusBar.BackgroundColor("#00000000");
+
         lblTitleAtTop=new Label(mainArrangement);
         lblTitleAtTop.WidthPercent(100);
         lblTitleAtTop.TextColor(colors.HEADING_TEXT);
-        lblTitleAtTop.Text("grassworld.fachtnaroe.net");
+        lblTitleAtTop.Text("\n\ngrassworld.fachtnaroe.net");
         lblTitleAtTop.FontTypeface(Ev3Constants.FontType.LARGE_FONT);
         lblTitleAtTop.FontTypeface(Component.TYPEFACE_MONOSPACE);
         lblTitleAtTop.TextAlignment(Component.ALIGNMENT_CENTER);
         padTop=new Label(mainArrangement);
         padTop.WidthPercent(100);
         padTop.HeightPercent(10);
-        hzUser=new HorizontalArrangement(mainArrangement);
-        hzUser.WidthPercent(100);
-        lblU=new Label(hzUser);
-        lblU.TextColor(colors.TEXTBOX_TEXT);
+
+        grid=new HorizontalArrangement(mainArrangement);
+        gridPadLeft=new Label(grid);
+        gridCenter = new VerticalArrangement(grid);
+        getGridPadRight=new Label(grid);
+        gridPadLeft.WidthPercent(5);
+        int gridCenterWidth=90;
+        gridCenter.WidthPercent(gridCenterWidth);
+        getGridPadRight.WidthPercent(5);
+
+        lblU=new Label(gridCenter);
+        lblU.TextColor(colors.MAIN_TEXT_MUCHO);
         lblU.BackgroundColor(colors.MAIN_BACKGROUND);
-        lblU.Text("U:");
-        lblU.WidthPercent(5);
-        lblU.FontBold(true);
-        usernameBox=new TextBox(hzUser);
+        lblU.Text("User email:");
+        lblU.WidthPercent(gridCenterWidth);
+        lblU.FontBold(false);
+        usernameBox=new TextBox(gridCenter);
         usernameBox.FontSize(14);
         usernameBox.FontTypeface(Component.TYPEFACE_MONOSPACE);
-        dbg("AAA");
-        usernameBox.WidthPercent(85);
+        usernameBox.WidthPercent(gridCenterWidth);
         usernameBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
         usernameBox.TextColor(colors.TEXTBOX_TEXT);
-        padBetween=new Label(mainArrangement);
-        padBetween.WidthPercent(100);
+        padBetween=new Label(gridCenter);
+        padBetween.WidthPercent(gridCenterWidth);
         padBetween.HeightPercent(1);
-        hzPass=new HorizontalArrangement(mainArrangement);
-        hzPass.WidthPercent(100);
-        lblP = new Label(hzPass);
-        lblP.TextColor(colors.TEXTBOX_TEXT);
+        lblP = new Label(gridCenter);
+        lblP.TextColor(colors.MAIN_TEXT_MUCHO);
         lblP.BackgroundColor(colors.MAIN_BACKGROUND);
-        lblP.Text("P:");
-        lblP.FontBold(true);
-        lblP.WidthPercent(5);
-        passwordBox=new PasswordTextBox(hzPass);
-        passwordBox.WidthPercent(85);
+        lblP.Text("Password:");
+        lblP.FontBold(false);
+        lblP.WidthPercent(gridCenterWidth);
+        passwordBox=new PasswordTextBox(gridCenter);
+        passwordBox.WidthPercent(gridCenterWidth);
         passwordBox.FontSize(14);
         passwordBox.FontTypeface(Component.TYPEFACE_MONOSPACE);
         passwordBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
         passwordBox.TextColor(colors.TEXTBOX_TEXT);
-        padAboveLogin = new Label(mainArrangement);
-        padAboveLogin.WidthPercent(100);
+        padAboveLogin = new Label(gridCenter);
+        padAboveLogin.WidthPercent(gridCenterWidth);
         padAboveLogin.HeightPercent(1);
-        btnLogin = new Button(mainArrangement);
-        btnLogin.WidthPercent(100);
+        btnLogin = new Button(gridCenter);
+        btnLogin.WidthPercent(gridCenterWidth);
         btnLogin.Text("login");
         btnLogin.BackgroundColor(colors.BUTTON_BACKGROUND);
         btnLogin.TextColor(colors.BUTTON_TEXT);
-        padBetweenLoginAndRegister=new Label(mainArrangement);
-        padBetweenLoginAndRegister.WidthPercent(100);
+        padBetweenLoginAndRegister=new Label(gridCenter);
+        padBetweenLoginAndRegister.WidthPercent(gridCenterWidth);
         padBetweenLoginAndRegister.HeightPercent(1);
-        btnRegister = new Button(mainArrangement);
-        btnRegister.WidthPercent(100);
+        btnRegister = new Button(gridCenter);
+        btnRegister.WidthPercent(gridCenterWidth);
         btnRegister.Text("register");
         btnRegister.TextColor(colors.BUTTON_TEXT);
         btnRegister.BackgroundColor(colors.BUTTON_BACKGROUND);
-        padBottom=new Label(mainArrangement);
+        padBottom=new Label(gridCenter);
         padBottom.WidthPercent(100);
         padBottom.Height(Component.LENGTH_FILL_PARENT);
         webAuthenticate=new Web(this);
-        webAuthenticate.Url(PrivateApplicationSettings.CLOUD_VERIFICATION_URL);
+        webAuthenticate.Url(ApplicationSettings.URL_LOGIN);
         if(ApplicationSettings.TESTING) {
             usernameBox.Text(ApplicationSettings.forTesting_User);
             passwordBox.Text(ApplicationSettings.forTesting_Pass);
@@ -137,6 +147,9 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
                     return false;
                 }
                 return true;
+            }
+            else if (component.equals(btnRegister)) {
+                switchForm("RegistrationScreen");
             }
         }
         else if (eventName.equals("GotText")) {
