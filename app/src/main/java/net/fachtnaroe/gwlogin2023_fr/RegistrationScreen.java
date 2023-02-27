@@ -63,7 +63,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             lblU = new Label(gridCenter);
             lblU.TextColor(colors.TEXTBOX_TEXT);
             lblU.BackgroundColor(colors.MAIN_BACKGROUND);
-            lblU.Text("Please provide an email address which will be your username:");
+            lblU.Text(ui_txt.REGISTER_GIVE_EMAIL);
             lblU.WidthPercent(gridCenterWidth);
             lblU.FontSize(14);
             lblU.TextColor(colors.MAIN_TEXT_MUCHO);
@@ -79,7 +79,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             lblP = new Label(gridCenter);
             lblP.TextColor(colors.MAIN_TEXT_MUCHO);
             lblP.BackgroundColor(colors.MAIN_BACKGROUND);
-            lblP.Text("Create a password, minimum length 8 characters, upper and lowercase, with one or more digits:");
+            lblP.Text(ui_txt.REGISTER_GIVE_PASSWORD);
             lblP.FontBold(false);
             lblP.WidthPercent(gridCenterWidth);
             lblP.FontSize(14);
@@ -96,7 +96,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             lblRN = new Label(gridCenter);
             lblRN.TextColor(colors.MAIN_TEXT_MUCHO);
             lblRN.BackgroundColor(colors.MAIN_BACKGROUND);
-            lblRN.Text("Type your name:");
+            lblRN.Text(ui_txt.REGISTER_GIVE_NAME);
             lblRN.WidthPercent(gridCenterWidth);
             lblRN.FontSize(14);
             rnBox = new TextBox(gridCenter);
@@ -112,7 +112,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             lblBorn = new Label(gridCenter);
             lblBorn.TextColor(colors.MAIN_TEXT_MUCHO);
             lblBorn.BackgroundColor(colors.MAIN_BACKGROUND);
-            lblBorn.Text("You need to be age 18 or older to use this game. Enter the year you were born:");
+            lblBorn.Text(ui_txt.REGISTER_GIVE_YOB);
             lblBorn.WidthPercent(gridCenterWidth);
             lblBorn.FontSize(14);
             bornBox = new TextBox(gridCenter);

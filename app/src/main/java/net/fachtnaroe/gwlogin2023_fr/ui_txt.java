@@ -37,4 +37,8 @@ class ui_txt {
     static final String HINT_DEVICE_NAME="Name of the CO2 unit";
     static final String MSG_REQUIRE_DEVICE_NAME="Please provide the name of the CO2 Sensor Unit.<br><br>That's the same as the name of the device Wi-Fi hot-spot the Unit created to allow you to provide details of your local Wi-Fi network.";
     static final String WARN_DANGER = "Danger";
+    static final String REGISTER_GIVE_EMAIL = "Please provide an email address which will be your username:";
+    static final String REGISTER_GIVE_PASSWORD = "Create a password, minimum length 8 characters, upper and lowercase, with one or more digits:";
+    static final String REGISTER_GIVE_NAME ="Type your name:";
+    static final String REGISTER_GIVE_YOB = "You need to be age 18 or older to use this game. Enter the year you were born:";
 }
