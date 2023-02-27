@@ -15,6 +15,8 @@ import com.google.appinventor.components.runtime.Web;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
+
 public class HelpAbout extends Form implements HandlesEventDispatching {
 
     private
@@ -64,9 +66,7 @@ public class HelpAbout extends Form implements HandlesEventDispatching {
         return false;
     }
 
-    public static void dbg (String debugMsg) {
-        System.err.print( "~~~> " + debugMsg + " <~~~\n");
-    }
+
     public static boolean isNumeric(String string) {
         int intValue;
         if(string == null || string.equals("")) {

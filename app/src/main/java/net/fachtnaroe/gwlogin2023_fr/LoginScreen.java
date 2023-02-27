@@ -16,6 +16,8 @@ import com.google.appinventor.components.runtime.util.Ev3Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
+
 
 public class LoginScreen extends Form implements HandlesEventDispatching {
 
@@ -185,7 +187,5 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
         // true means event has been handled by us (ie recognised)
         return false;
     }
-    public static void dbg (String debugMsg) {
-        System.err.print( "~~~> " + debugMsg + " <~~~\n");
-    }
+
 }

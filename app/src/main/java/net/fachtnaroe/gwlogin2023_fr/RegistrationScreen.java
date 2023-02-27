@@ -19,16 +19,20 @@ import java.util.regex.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
+
+import java.util.Date;
+
 public class RegistrationScreen extends Form implements HandlesEventDispatching {
         private
         HorizontalArrangement  grid;
         VerticalArrangement gridCenter,  mainArrangement;;
         TextBox usernameBox, rnBox, bornBox;
         PasswordTextBox passwordBox;
-        Button btnLogin, btnRegister;
+        Button btnRegister;
         Label padTop, padBottom, padBetweenLoginAndRegister, lblU, padBetween, lblP, padAboveLogin;
         Label lblTitleAtTop, gridPadLeft, getGridPadRight, lblRN, lblBorn;
-        Web webValidate;
+        Web webCheckExists, webRegister;
         JSONObject jsonCredentials = new JSONObject();
         StatusBarTools statusBar;
         Notifier announce;
@@ -131,15 +135,19 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             padBetweenLoginAndRegister.HeightPercent(1);
             btnRegister = new Button(gridCenter);
             btnRegister.WidthPercent(gridCenterWidth);
-            btnRegister.Text("register");
+            btnRegister.Text(ui_txt.REGISTER);
             btnRegister.TextColor(colors.BUTTON_TEXT);
             btnRegister.BackgroundColor(colors.BUTTON_BACKGROUND);
 
             padBottom = new Label(mainArrangement);
             padBottom.WidthPercent(100);
             padBottom.Height(Component.LENGTH_FILL_PARENT);
-            webValidate = new Web(this);
-            webValidate.Url(ApplicationSettings.URL_LOGIN);
+
+            announce=new Notifier(this);
+            webCheckExists = new Web(this);
+            webCheckExists.Url(ApplicationSettings.URL_LOGIN);
+            webRegister = new Web(this);
+            webRegister.Url(ApplicationSettings.URL_LOGIN);
 
             EventDispatcher.registerEventForDelegation(this, formName, "BackPressed");
             EventDispatcher.registerEventForDelegation(this, formName, "Click");
@@ -155,18 +163,19 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             }
             else if (eventName.equals("Click")) {
                 if (component.equals(btnRegister)) {
-                    btnRegister.Text(ui_txt.CONNECTION_SENDING);
                     btnRegister.Enabled(false);
                     if (bits.isValidEmailAddress(usernameBox.Text())) {
                         if(testPassword() && testName() && testAge()) {
                             try {
-                                jsonCredentials.put("action", "exists");
+                                jsonCredentials.put("action", "validate");
                                 jsonCredentials.put("user", usernameBox.Text());
 
                                 dbg("Sending: " + jsonCredentials.toString());
                                 String msg = jsonCredentials.toString();
-                                webValidate.PostText(msg);
-                            } catch (Exception e) {
+                                webCheckExists.PostText(msg);
+                                btnRegister.Text(ui_txt.CONNECTION_SENDING);
+                            }
+                            catch (Exception e) {
                                 return false;
                             }
                         }
@@ -174,13 +183,28 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
                             btnRegister.Enabled(true);
                         }
                     }
-
+                    else {
+                        announce.ShowAlert(ui_txt.REGISTER_INVALID_EMAIL);
+                        btnRegister.Enabled(true);
+                    }
                     return true;
                 }
             } else if (eventName.equals("GotText")) {
-                if (component.equals(webValidate)) {
+                if (component.equals(webCheckExists)) {
                     String status = params[1].toString();
                     String textOfResponse = (String) params[3];
+//                    from API:
+//                    action=”validate”
+//                    user=”_an_email_address”
+//                    status=”OK”
+//                    user=”exists”
+//                    status=”error”
+//                    detail=”not a valid email format”
+//
+//                    status=”OK”
+//                    user=”unknown”
+//
+
                     if (textOfResponse.equals("")) {
                         textOfResponse = status;
                     }
@@ -188,20 +212,28 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
                         try {
                             JSONObject parser = new JSONObject(textOfResponse);
                             if (parser.getString("status").equals("OK")) {
-                                String token = parser.getString("token");
-                                switchFormWithStartValue("GameScreen", token);
-                            } else {
-                                btnLogin.Text(parser.getString("status"));
-                                btnLogin.Enabled(true);
+                                String result = parser.getString("user");
+                                if(result.contentEquals("exists")){
+                                    announce.ShowAlert(ui_txt.REGISTER_USER_EXISTS);
+                                    btnRegister.Enabled(true);
+                                    btnRegister.Text(ui_txt.REGISTER);
+                                }
                             }
-                        } catch (JSONException e) {
-                            btnLogin.Text("error connecting " + status);
-                            btnLogin.Enabled(true);
+                            else {
+                                btnRegister.Text(parser.getString("status"));
+                                btnRegister.Enabled(true);
+                            }
                         }
-                    } else {
-                        btnLogin.Text("error connecting " + status);
-                        btnLogin.Enabled(true);
+                        catch (JSONException e) {
+                            btnRegister.Text("error connecting " + status);
+                            btnRegister.Enabled(true);
+                        }
                     }
+                    else {
+                        btnRegister.Text("error connecting " + status);
+                        btnRegister.Enabled(true);
+                    }
+                    return true;
                 }
             }
             // true means event has been handled by us (ie recognised)
@@ -209,37 +241,71 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
         }
         boolean testPassword(){
             final Integer min_pass=8, max_pass=32;
-            boolean result=false;
+            dbg("Checking password validity");
             String pw=passwordBox.Text();
             pw=pw.stripLeading();
             pw=pw.stripTrailing();
             if ((pw.length()<min_pass) || (pw.length()>max_pass)) {
-                announce.ShowAlert(ui_txt.PASSWORD_LENGTH+"( >="+min_pass.toString()+" <="+max_pass.toString()+" )");
-                return result;
+                announce.ShowAlert(ui_txt.PASSWORD_LENGTH+"\n( "+min_pass.toString()+" <= length <="+max_pass.toString()+" )");
+                return false;
             }
-            // one or more digits
-            String regex = "/d/";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(pw);
-            int count = 0;
-            while(matcher.find()) {
-                count++;
+            /* Testing for:
+                one or more digits      \d
+                min 1 uppercase         [A-Z]
+                min 1 lowercase         [a-z]
+
+                I've put each regex pattern in an array of strings, and
+                iterate across the elements of the array, manually counting each
+                qty, returning if any error found.
+
+                See: https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
+             */
+            String[] requirements={"\\d", "[A-Z]","[a-z]"};
+            for (String regex : requirements) {
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(pw);
+                Integer count = 0;
+                while(matcher.find()) {
+                    count++;
+                }
+                dbg(regex+"="+count.toString());
+                if(count < 1){
+                    announce.ShowAlert(ui_txt.PASSWORD_CONTENT);
+                    return false;
+                }
             }
-            if(count < 1){
-                announce.ShowAlert(ui_txt.PASSWORD_CONTENT);
-                return result;
-            }
-            result=true;
-            return result;
+            return true;
         }
         boolean testName(){
+            dbg("Checking Name validity");
+            String rn=rnBox.Text();
+            rn.replace(" ","");
+            if(rn.length()<1) {
+                announce.ShowAlert(ui_txt.REALNAME_LENGTH);
+                return false;
+            }
+            return true;
+        }
 
-            return true;
-        }
         boolean testAge(){
+            dbg("Checking age validity");
+            final Integer min_age=18;
+            try {
+                Date d=new Date();
+                Integer thisyear = d.getYear();
+                thisyear+=1900;
+                Integer yob = Integer.valueOf(bornBox.Text());
+                Integer age=thisyear - yob;
+                dbg("Age "+age.toString());
+                if(age < min_age) {
+                    announce.ShowAlert(ui_txt.AGE_TOO_YOUNG);
+                    return false;
+                }
+            }
+            catch (Exception e) {
+                announce.ShowAlert(ui_txt.AGE_TOO_YOUNG);
+                return false;
+            }
             return true;
-        }
-        public static void dbg(String debugMsg) {
-            System.err.print("~~~> " + debugMsg + " <~~~\n");
         }
 }

@@ -29,7 +29,7 @@ public class Splash extends Form implements HandlesEventDispatching {
         mainArrangement.WidthPercent(100);
         mainArrangement.Height(LENGTH_FILL_PARENT);
         mainArrangement.BackgroundColor(MAIN_BACKGROUND);
-        mainArrangement.Image("SplashAttempt01.png");
+        mainArrangement.Image("SplashAttempt02.png");
         statusBar=new StatusBarTools(mainArrangement);
         statusBar.BGTransparentColor("#00000000");
         statusBar.BackgroundColor("#00000000");
