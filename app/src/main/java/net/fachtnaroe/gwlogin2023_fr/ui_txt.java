@@ -41,4 +41,9 @@ class ui_txt {
     static final String REGISTER_GIVE_PASSWORD = "Create a password, minimum length 8 characters, upper and lowercase, with one or more digits:";
     static final String REGISTER_GIVE_NAME ="Type your name:";
     static final String REGISTER_GIVE_YOB = "You need to be age 18 or older to use this game. Enter the year you were born:";
+    static final String PASSWORD_LENGTH="Password length incorrect";
+    static final String USERNAME_LENGTH="Provide a real name";
+    static final String AGE_TOO_YOUNG="Too young";
+    static final String PASSWORD_CONTENT="Password must contain digits, and upper and lowercase characters";
+
 }

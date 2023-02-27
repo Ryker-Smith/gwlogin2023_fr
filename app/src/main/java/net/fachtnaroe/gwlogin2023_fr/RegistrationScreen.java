@@ -7,11 +7,14 @@ import com.google.appinventor.components.runtime.Form;
 import com.google.appinventor.components.runtime.HandlesEventDispatching;
 import com.google.appinventor.components.runtime.HorizontalArrangement;
 import com.google.appinventor.components.runtime.Label;
+import com.google.appinventor.components.runtime.Notifier;
 import com.google.appinventor.components.runtime.PasswordTextBox;
 import com.google.appinventor.components.runtime.TextBox;
 import com.google.appinventor.components.runtime.VerticalArrangement;
 import com.google.appinventor.components.runtime.Web;
 import com.google.appinventor.components.runtime.util.Ev3Constants;
+
+import java.util.regex.*;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +31,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
         Web webValidate;
         JSONObject jsonCredentials = new JSONObject();
         StatusBarTools statusBar;
+        Notifier announce;
 
         protected void $define() {
 
@@ -146,13 +150,14 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
 
             dbg("dispatchEvent: " + formName + " [" + component.toString() + "] [" + componentName + "] " + eventName);
             if (eventName.equals("BackPressed")) {
+                Form.finishActivity();
                 return true;
             }
             else if (eventName.equals("Click")) {
                 if (component.equals(btnRegister)) {
                     btnRegister.Text(ui_txt.CONNECTION_SENDING);
                     btnRegister.Enabled(false);
-                    if (testEmail()) {
+                    if (bits.isValidEmailAddress(usernameBox.Text())) {
                         if(testPassword() && testName() && testAge()) {
                             try {
                                 jsonCredentials.put("action", "exists");
@@ -202,13 +207,33 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             // true means event has been handled by us (ie recognised)
             return false;
         }
-        boolean testEmail(){
-            return true;
-        }
         boolean testPassword(){
-            return true;
+            final Integer min_pass=8, max_pass=32;
+            boolean result=false;
+            String pw=passwordBox.Text();
+            pw=pw.stripLeading();
+            pw=pw.stripTrailing();
+            if ((pw.length()<min_pass) || (pw.length()>max_pass)) {
+                announce.ShowAlert(ui_txt.PASSWORD_LENGTH+"( >="+min_pass.toString()+" <="+max_pass.toString()+" )");
+                return result;
+            }
+            // one or more digits
+            String regex = "/d/";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(pw);
+            int count = 0;
+            while(matcher.find()) {
+                count++;
+            }
+            if(count < 1){
+                announce.ShowAlert(ui_txt.PASSWORD_CONTENT);
+                return result;
+            }
+            result=true;
+            return result;
         }
         boolean testName(){
+
             return true;
         }
         boolean testAge(){
