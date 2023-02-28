@@ -48,5 +48,10 @@ class ui_txt {
     static final String PASSWORD_CONTENT="Password must contain digits, and upper and lowercase characters";
     static final String REGISTER_USER_EXISTS ="There's already an account with that email";
     static final String REGISTER ="register";
+    static final String CHECKING ="checking";
+    static final String PROCESSING ="processing";
+    static final String WAITING ="waiting";
+    static final String SUCCESS ="success";
+    static final String HAPPY_WOOHOO="SUCCESS\n\nCheck your email to activate your membership ";
 
 }

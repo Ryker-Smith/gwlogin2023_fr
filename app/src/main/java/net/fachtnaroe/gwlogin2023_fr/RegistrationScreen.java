@@ -81,6 +81,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             usernameBox.WidthPercent(gridCenterWidth);
             usernameBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             usernameBox.TextColor(colors.TEXTBOX_TEXT);
+            usernameBox.Text("fachtna.roe@tcfe.ie");
             padBetween = new Label(gridCenter);
             padBetween.WidthPercent(gridCenterWidth);
             padBetween.HeightPercent(1);
@@ -100,6 +101,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             padAboveLogin = new Label(gridCenter);
             padAboveLogin.WidthPercent(100);
             padAboveLogin.HeightPercent(1);
+            passwordBox.Text("abscdef45K");
 
             lblRN = new Label(gridCenter);
             lblRN.TextColor(colors.MAIN_TEXT_MUCHO);
@@ -113,6 +115,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             rnBox.WidthPercent(gridCenterWidth);
             rnBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             rnBox.TextColor(colors.TEXTBOX_TEXT);
+            rnBox.Text("HHH");
 
             padAboveLogin = new Label(gridCenter);
             padAboveLogin.WidthPercent(100);
@@ -129,6 +132,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             bornBox.WidthPercent(gridCenterWidth);
             bornBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             bornBox.TextColor(colors.TEXTBOX_TEXT);
+            bornBox.Text("1900");
 
             padBetweenLoginAndRegister = new Label(gridCenter);
             padBetweenLoginAndRegister.WidthPercent(100);
@@ -142,6 +146,10 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             padBottom = new Label(mainArrangement);
             padBottom.WidthPercent(100);
             padBottom.Height(Component.LENGTH_FILL_PARENT);
+            padBottom.TextAlignment(Component.ALIGNMENT_CENTER);
+            padBottom.TextAlignment(AlignVertical());
+            padBottom.TextColor(colors.MAIN_TEXT_MUCHO);
+            padBottom.FontSize(20);
 
             announce=new Notifier(this);
             webCheckExists = new Web(this);
@@ -164,6 +172,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             else if (eventName.equals("Click")) {
                 if (component.equals(btnRegister)) {
                     btnRegister.Enabled(false);
+                    btnRegister.Text(ui_txt.CHECKING);
                     if (bits.isValidEmailAddress(usernameBox.Text())) {
                         if(testPassword() && testName() && testAge()) {
                             try {
@@ -189,22 +198,12 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
                     }
                     return true;
                 }
-            } else if (eventName.equals("GotText")) {
+            }
+            else if (eventName.equals("GotText")) {
                 if (component.equals(webCheckExists)) {
                     String status = params[1].toString();
+                    btnRegister.Text(ui_txt.PROCESSING);
                     String textOfResponse = (String) params[3];
-//                    from API:
-//                    action=”validate”
-//                    user=”_an_email_address”
-//                    status=”OK”
-//                    user=”exists”
-//                    status=”error”
-//                    detail=”not a valid email format”
-//
-//                    status=”OK”
-//                    user=”unknown”
-//
-
                     if (textOfResponse.equals("")) {
                         textOfResponse = status;
                     }
@@ -217,6 +216,23 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
                                     announce.ShowAlert(ui_txt.REGISTER_USER_EXISTS);
                                     btnRegister.Enabled(true);
                                     btnRegister.Text(ui_txt.REGISTER);
+                                }
+                                else {
+                                    // can create user
+                                    try {
+                                        jsonCredentials.put("action", "register");
+                                        jsonCredentials.put("user", usernameBox.Text());
+                                        jsonCredentials.put("password",passwordBox.Text());
+                                        jsonCredentials.put("fullname",rnBox.Text());
+                                        jsonCredentials.put("yob",bornBox.Text());
+                                        dbg("Registering: "+jsonCredentials.toString());
+                                        String msg=jsonCredentials.toString() ;
+                                        btnRegister.Text(ui_txt.WAITING);
+                                        webRegister.PostText(msg);
+                                    }
+                                    catch (Exception e) {
+                                        return false;
+                                    }
                                 }
                             }
                             else {
@@ -234,6 +250,36 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
                         btnRegister.Enabled(true);
                     }
                     return true;
+                }
+                else  if (component.equals(webRegister)) {
+                    String status = params[1].toString();
+                    String textOfResponse = (String) params[3];
+                    btnRegister.Text(ui_txt.REGISTER);
+                    if (status.equals("200")) {
+                        try {
+                            JSONObject parser = new JSONObject(textOfResponse);
+                            if (parser.getString("status").equals("OK")) {
+                                String result = parser.getString("userid");
+                                if (Integer.parseInt(result)>0) {
+                                    announce.ShowAlert(ui_txt.HAPPY_WOOHOO);
+                                    padBottom.Text(ui_txt.HAPPY_WOOHOO);
+                                    btnRegister.Enabled(false);
+                                    btnRegister.Text(ui_txt.SUCCESS);
+                                    btnRegister.TextColor(colors.MAIN_BACKGROUND);
+                                    btnRegister.BackgroundColor(colors.MAIN_BACKGROUND);
+                                    usernameBox.Enabled(false);
+                                    passwordBox.Enabled(false);
+                                    rnBox.Enabled(false);
+                                    bornBox.Enabled(false);
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (JSONException e){
+                            btnRegister.Enabled(true);
+                            return true;
+                        }
+                    }
                 }
             }
             // true means event has been handled by us (ie recognised)

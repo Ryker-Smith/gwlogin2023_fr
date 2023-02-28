@@ -125,15 +125,13 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
 
     public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
 
-        dbg("dispatchEvent: " + formName + " [" + component.toString() + "] [" + componentName + "] " + eventName);
+        System.err.print("dispatchEvent: " + formName + " [" + component.toString() + "] [" + componentName + "] " + eventName);
         if (eventName.equals("BackPressed") || eventName.equals("OtherScreenClosed")) {
-            System.exit(0);
+            btnLogin.Enabled(true);
             return true;
         }
         else if (eventName.equals("Click")) {
             if (component.equals(btnLogin)) {
-//                switchFormWithStartValue("GameScreen","KHKLKJHKJH");
-//                return true;
                 btnLogin.Text(ui_txt.CONNECTION_SENDING);
                 btnLogin.Enabled(false);
                 System.err.print("You pressed a button");
@@ -155,31 +153,33 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
             }
         }
         else if (eventName.equals("GotText")) {
+            String msg;
             if (component.equals(webAuthenticate)) {
                 String status = params[1].toString();
                 String textOfResponse = (String) params[3];
+                dbg(textOfResponse);
                 if (textOfResponse.equals("")) {
                     textOfResponse=status;
                 }
                 if (status.equals("200")) {
                     try {
                         JSONObject parser = new JSONObject(textOfResponse);
-                        if (parser.getString("status").equals("OK")) {
+                        if (parser.getString("status").equals("error")) {
+                            btnLogin.Text(parser.getString("detail"));
+                            btnLogin.Enabled(true);
+                        }
+                        else{
                             String token=parser.getString("token");
                             switchFormWithStartValue("GameScreen",token);
                         }
-                        else {
-                            btnLogin.Text(parser.getString("status"));
-                            btnLogin.Enabled(true);
-                        }
                     }
                     catch (JSONException e){
-                        btnLogin.Text("error connecting "+status);
+                        btnLogin.Text("error e177 processing response");
                         btnLogin.Enabled(true);
                     }
                 }
                 else{
-                    btnLogin.Text("error connecting "+status);
+                    btnLogin.Text("error e182 processing response"+status);
                     btnLogin.Enabled(true);
                 }
             }
