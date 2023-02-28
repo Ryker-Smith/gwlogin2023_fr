@@ -17,20 +17,39 @@ public class GameScreen extends Form implements HandlesEventDispatching {
 
     private
     VerticalArrangement mainArrangement;
+    HorizontalArrangement topMenu;
     Label lblTitleAtTop;
-    Button goButton;
+    Button btl, btr;
     WebViewer wvGame;
+    StatusBarTools statusBar;
 
     protected void $define() {
 
         this.Sizing("Responsive");
         mainArrangement=new VerticalArrangement(this);
         mainArrangement.WidthPercent(100);
-        mainArrangement.HeightPercent(100);
+        mainArrangement.Height(LENGTH_FILL_PARENT);
         mainArrangement.BackgroundColor(colors.MAIN_BACKGROUND);
         mainArrangement.AlignHorizontal(Component.ALIGNMENT_CENTER);
-        lblTitleAtTop=new Label(mainArrangement);
-        lblTitleAtTop.WidthPercent(100);
+        statusBar=new StatusBarTools(mainArrangement);
+        statusBar.BGTransparentColor("#00000000");
+        statusBar.BackgroundColor("#00000000");
+
+        topMenu=new HorizontalArrangement(mainArrangement);
+        btl=new Button(topMenu);
+        lblTitleAtTop=new Label(topMenu);
+        btr=new Button(topMenu);
+
+        topMenu.WidthPercent(100);
+        topMenu.HeightPercent(5);
+        btl.WidthPercent(5);
+        btl.BackgroundColor(colors.MAIN_BACKGROUND);
+        btl.Text("");
+        btr.WidthPercent(5);
+        btr.BackgroundColor(colors.MAIN_BACKGROUND);
+        btr.Text("");
+
+        lblTitleAtTop.WidthPercent(90);
         lblTitleAtTop.TextColor(colors.HEADING_TEXT);
         lblTitleAtTop.Text("grassworld.fachtnaroe.net");
         lblTitleAtTop.FontTypeface(Ev3Constants.FontType.LARGE_FONT);
@@ -54,8 +73,12 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             return true;
         }
         else if (eventName.equals("Click")) {
-            if (component.equals(goButton)) {
-                goButton.Text("Goodbye");
+            if (component.equals(btl)) {
+                System.err.print("You pressed a button");
+                // invert te timer status
+                return true;
+            }
+            else if (component.equals(btr)) {
                 System.err.print("You pressed a button");
                 // invert te timer status
                 return true;

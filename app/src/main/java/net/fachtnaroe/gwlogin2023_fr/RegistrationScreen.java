@@ -46,7 +46,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             mainArrangement.BackgroundColor(colors.MAIN_BACKGROUND);
             mainArrangement.AlignHorizontal(Component.ALIGNMENT_CENTER);
             statusBar=new StatusBarTools(mainArrangement);
-            statusBar.BGTransparentColor("#00000000");
+            statusBar.BGTransparentColor("#000000");
             statusBar.BackgroundColor("#00000000");
             lblTitleAtTop = new Label(mainArrangement);
             lblTitleAtTop.WidthPercent(100);
