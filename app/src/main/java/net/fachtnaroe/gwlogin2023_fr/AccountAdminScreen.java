@@ -1,5 +1,7 @@
 package net.fachtnaroe.gwlogin2023_fr;
 
+import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
+
 import com.google.appinventor.components.runtime.Button;
 import com.google.appinventor.components.runtime.Component;
 import com.google.appinventor.components.runtime.EventDispatcher;
@@ -14,16 +16,14 @@ import com.google.appinventor.components.runtime.VerticalArrangement;
 import com.google.appinventor.components.runtime.Web;
 import com.google.appinventor.components.runtime.util.Ev3Constants;
 
-import java.util.regex.*;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
-
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class RegistrationScreen extends Form implements HandlesEventDispatching {
+public class AccountAdminScreen extends Form implements HandlesEventDispatching {
         private
         HorizontalArrangement  grid;
         VerticalArrangement gridCenter,  mainArrangement;;
@@ -166,7 +166,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
 
             dbg("dispatchEvent: " + formName + " [" + component.toString() + "] [" + componentName + "] " + eventName);
             if (eventName.equals("BackPressed")) {
-                finishActivity();
+                Form.finishActivity();
                 return true;
             }
             else if (eventName.equals("Click")) {

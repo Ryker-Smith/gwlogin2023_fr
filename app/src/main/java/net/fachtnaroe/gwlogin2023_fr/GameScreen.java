@@ -22,6 +22,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
     Button btl, btr;
     WebViewer wvGame;
     StatusBarTools statusBar;
+    String token;
 
     protected void $define() {
 
@@ -34,7 +35,8 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         statusBar=new StatusBarTools(mainArrangement);
         statusBar.BGTransparentColor("#00000000");
         statusBar.BackgroundColor("#00000000");
-
+        token=this.startupValue;
+        token=token.replace("\"","");// apparently quotes are part of what's passed!
         topMenu=new HorizontalArrangement(mainArrangement);
         btl=new Button(topMenu);
         lblTitleAtTop=new Label(topMenu);
@@ -43,11 +45,13 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         topMenu.WidthPercent(100);
         topMenu.HeightPercent(5);
         btl.WidthPercent(5);
+        btl.Height(Component.LENGTH_FILL_PARENT);
         btl.BackgroundColor(colors.MAIN_BACKGROUND);
         btl.Text("");
         btr.WidthPercent(5);
         btr.BackgroundColor(colors.MAIN_BACKGROUND);
         btr.Text("");
+        btr.Height(Component.LENGTH_FILL_PARENT);
 
         lblTitleAtTop.WidthPercent(90);
         lblTitleAtTop.TextColor(colors.HEADING_TEXT);
@@ -75,12 +79,14 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         else if (eventName.equals("Click")) {
             if (component.equals(btl)) {
                 System.err.print("You pressed a button");
+                switchFormWithStartValue("AccountAdminScreen",token);
                 // invert te timer status
                 return true;
             }
             else if (component.equals(btr)) {
                 System.err.print("You pressed a button");
                 // invert te timer status
+
                 return true;
             }
         }
