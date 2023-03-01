@@ -13,6 +13,7 @@ class ui_txt {
     static final String CONNECTION_ATTEMPT = "Connection attempt to";
     static final String CONNECTION_SENDING = "Sending";
     static final String CONNECTION_RECEIVED = "Received";
+    static final String STARTING = "Starting";
     static final String CONNECTION_SUCCESS = "Successfully connected to unit";
     static final String CONNECTION_FAILURE = "Could not connect to Sensor Unit";
     static final String CONNECT_BEFORE_REBOOT = "Connect to device before attempting reboot";
@@ -53,5 +54,14 @@ class ui_txt {
     static final String WAITING ="waiting";
     static final String SUCCESS ="success";
     static final String HAPPY_WOOHOO="SUCCESS\n\nCheck your email to activate your membership ";
+    static final String USERNAME="email";
+    static final String OLDPASSWORD="Existing password";
+    static final String NEW_PASSWORD="New password";
+    static final String CONFIRM_NEW_PASSWORD="Confirm new password";
+    static final String CHANGE_PASSWORD="Change password";
+    static final String CHANGE_DELETE="Delete my account";
+    static final String YES="Yes";
+    static final String NO="No";
+    static final String CONFIRM_DELETE="Please confirm removal of your account";
 
 }

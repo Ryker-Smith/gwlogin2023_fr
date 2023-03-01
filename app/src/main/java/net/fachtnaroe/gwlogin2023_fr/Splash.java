@@ -48,7 +48,7 @@ public class Splash extends Form implements HandlesEventDispatching {
         clkColorChange.TimerInterval(50);
         clkColorChange.TimerEnabled(true);
         clkScreenChangeTimer=new Clock(this);
-        clkScreenChangeTimer.TimerInterval(2000);
+        clkScreenChangeTimer.TimerInterval(ApplicationSettings.SplashTimeOut);
         clkScreenChangeTimer.TimerEnabled(true);
         EventDispatcher.registerEventForDelegation(this, formName, "Timer");
         EventDispatcher.registerEventForDelegation(this, formName, "BackPressed");
@@ -60,10 +60,11 @@ public class Splash extends Form implements HandlesEventDispatching {
         System.err.print("dispatchEvent: " + formName + " [" + component.toString() + "] [" + componentName + "] " + eventName);
         if (eventName.equals("BackPressed")) {
             // this would be a great place to do something useful
+            finishApplication();
             return true;
         }
         else if (eventName.equals("OtherScreenClosed")) {
-            System.exit(0);
+            finishApplication();
             return true;
         }
         else if (eventName.equals("Timer")) {

@@ -170,6 +170,7 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
                         }
                         else{
                             String token=parser.getString("token");
+                            btnLogin.Text(ui_txt.STARTING);
                             switchFormWithStartValue("GameScreen",token);
                         }
                     }

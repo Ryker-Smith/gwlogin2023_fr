@@ -25,13 +25,13 @@ import java.util.regex.Pattern;
 
 public class AccountAdminScreen extends Form implements HandlesEventDispatching {
         private
-        HorizontalArrangement  grid;
+        HorizontalArrangement grid;
         VerticalArrangement gridCenter,  mainArrangement;;
-        TextBox usernameBox, rnBox, bornBox;
-        PasswordTextBox passwordBox;
+        TextBox usernameBox;
+        PasswordTextBox passwordBox, newPassBox1, newPassBox2;
         Button btnRegister;
         Label padTop, padBottom, padBetweenLoginAndRegister, lblU, padBetween, lblP, padAboveLogin;
-        Label lblTitleAtTop, gridPadLeft, getGridPadRight, lblRN, lblBorn;
+        Label lblTitleAtTop, gridPadLeft, getGridPadRight, lblNewPass1, lblNewPass2;
         Web webCheckExists, webRegister;
         JSONObject jsonCredentials = new JSONObject();
         StatusBarTools statusBar;
@@ -71,7 +71,7 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             lblU = new Label(gridCenter);
             lblU.TextColor(colors.TEXTBOX_TEXT);
             lblU.BackgroundColor(colors.MAIN_BACKGROUND);
-            lblU.Text(ui_txt.REGISTER_GIVE_EMAIL);
+            lblU.Text(ui_txt.USERNAME);
             lblU.WidthPercent(gridCenterWidth);
             lblU.FontSize(14);
             lblU.TextColor(colors.MAIN_TEXT_MUCHO);
@@ -82,13 +82,14 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             usernameBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             usernameBox.TextColor(colors.TEXTBOX_TEXT);
             usernameBox.Text("fachtna.roe@tcfe.ie");
+
             padBetween = new Label(gridCenter);
             padBetween.WidthPercent(gridCenterWidth);
             padBetween.HeightPercent(1);
             lblP = new Label(gridCenter);
             lblP.TextColor(colors.MAIN_TEXT_MUCHO);
             lblP.BackgroundColor(colors.MAIN_BACKGROUND);
-            lblP.Text(ui_txt.REGISTER_GIVE_PASSWORD);
+            lblP.Text(ui_txt.OLDPASSWORD);
             lblP.FontBold(false);
             lblP.WidthPercent(gridCenterWidth);
             lblP.FontSize(14);
@@ -98,48 +99,47 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             passwordBox.FontTypeface(Component.TYPEFACE_MONOSPACE);
             passwordBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             passwordBox.TextColor(colors.TEXTBOX_TEXT);
-            padAboveLogin = new Label(gridCenter);
-            padAboveLogin.WidthPercent(100);
-            padAboveLogin.HeightPercent(1);
-            passwordBox.Text("abscdef45K");
-
-            lblRN = new Label(gridCenter);
-            lblRN.TextColor(colors.MAIN_TEXT_MUCHO);
-            lblRN.BackgroundColor(colors.MAIN_BACKGROUND);
-            lblRN.Text(ui_txt.REGISTER_GIVE_NAME);
-            lblRN.WidthPercent(gridCenterWidth);
-            lblRN.FontSize(14);
-            rnBox = new TextBox(gridCenter);
-            rnBox.FontSize(14);
-            rnBox.FontTypeface(Component.TYPEFACE_MONOSPACE);
-            rnBox.WidthPercent(gridCenterWidth);
-            rnBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
-            rnBox.TextColor(colors.TEXTBOX_TEXT);
-            rnBox.Text("HHH");
+            // put radio buttons here for delete/change password/do nothing?
 
             padAboveLogin = new Label(gridCenter);
             padAboveLogin.WidthPercent(100);
             padAboveLogin.HeightPercent(1);
-            lblBorn = new Label(gridCenter);
-            lblBorn.TextColor(colors.MAIN_TEXT_MUCHO);
-            lblBorn.BackgroundColor(colors.MAIN_BACKGROUND);
-            lblBorn.Text(ui_txt.REGISTER_GIVE_YOB);
-            lblBorn.WidthPercent(gridCenterWidth);
-            lblBorn.FontSize(14);
-            bornBox = new TextBox(gridCenter);
-            bornBox.FontSize(14);
-            bornBox.FontTypeface(Component.TYPEFACE_MONOSPACE);
-            bornBox.WidthPercent(gridCenterWidth);
-            bornBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
-            bornBox.TextColor(colors.TEXTBOX_TEXT);
-            bornBox.Text("1900");
+
+            lblNewPass1 = new Label(gridCenter);
+            lblNewPass1.TextColor(colors.MAIN_TEXT_MUCHO);
+            lblNewPass1.BackgroundColor(colors.MAIN_BACKGROUND);
+            lblNewPass1.Text(ui_txt.NEW_PASSWORD);
+            lblNewPass1.WidthPercent(gridCenterWidth);
+            lblNewPass1.FontSize(14);
+            newPassBox1 = new PasswordTextBox(gridCenter);
+            newPassBox1.FontSize(14);
+            newPassBox1.FontTypeface(Component.TYPEFACE_MONOSPACE);
+            newPassBox1.WidthPercent(gridCenterWidth);
+            newPassBox1.BackgroundColor(colors.TEXTBOX_BACKGROUND);
+            newPassBox1.TextColor(colors.TEXTBOX_TEXT);
+
+            padAboveLogin = new Label(gridCenter);
+            padAboveLogin.WidthPercent(100);
+            padAboveLogin.HeightPercent(1);
+            lblNewPass2 = new Label(gridCenter);
+            lblNewPass2.TextColor(colors.MAIN_TEXT_MUCHO);
+            lblNewPass2.BackgroundColor(colors.MAIN_BACKGROUND);
+            lblNewPass2.Text(ui_txt.CONFIRM_NEW_PASSWORD);
+            lblNewPass2.WidthPercent(gridCenterWidth);
+            lblNewPass2.FontSize(14);
+            newPassBox2 = new PasswordTextBox(gridCenter);
+            newPassBox2.FontSize(14);
+            newPassBox2.FontTypeface(Component.TYPEFACE_MONOSPACE);
+            newPassBox2.WidthPercent(gridCenterWidth);
+            newPassBox2.BackgroundColor(colors.TEXTBOX_BACKGROUND);
+            newPassBox2.TextColor(colors.TEXTBOX_TEXT);
 
             padBetweenLoginAndRegister = new Label(gridCenter);
             padBetweenLoginAndRegister.WidthPercent(100);
             padBetweenLoginAndRegister.HeightPercent(1);
             btnRegister = new Button(gridCenter);
             btnRegister.WidthPercent(gridCenterWidth);
-            btnRegister.Text(ui_txt.REGISTER);
+            btnRegister.Text(ui_txt.CHANGE_PASSWORD);
             btnRegister.TextColor(colors.BUTTON_TEXT);
             btnRegister.BackgroundColor(colors.BUTTON_BACKGROUND);
 
@@ -174,7 +174,7 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                     btnRegister.Enabled(false);
                     btnRegister.Text(ui_txt.CHECKING);
                     if (bits.isValidEmailAddress(usernameBox.Text())) {
-                        if(testPassword() && testName() && testAge()) {
+                        if(testPassword()) {
                             try {
                                 jsonCredentials.put("action", "validate");
                                 jsonCredentials.put("user", usernameBox.Text());
@@ -223,8 +223,8 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                                         jsonCredentials.put("action", "register");
                                         jsonCredentials.put("user", usernameBox.Text());
                                         jsonCredentials.put("password",passwordBox.Text());
-                                        jsonCredentials.put("fullname",rnBox.Text());
-                                        jsonCredentials.put("yob",bornBox.Text());
+//                                        jsonCredentials.put("fullname",rnBox.Text());
+//                                        jsonCredentials.put("yob",bornBox.Text());
                                         dbg("Registering: "+jsonCredentials.toString());
                                         String msg=jsonCredentials.toString() ;
                                         btnRegister.Text(ui_txt.WAITING);
@@ -269,8 +269,8 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                                     btnRegister.BackgroundColor(colors.MAIN_BACKGROUND);
                                     usernameBox.Enabled(false);
                                     passwordBox.Enabled(false);
-                                    rnBox.Enabled(false);
-                                    bornBox.Enabled(false);
+//                                    rnBox.Enabled(false);
+//                                    bornBox.Enabled(false);
                                     return true;
                                 }
                             }
@@ -319,38 +319,6 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                     announce.ShowAlert(ui_txt.PASSWORD_CONTENT);
                     return false;
                 }
-            }
-            return true;
-        }
-        boolean testName(){
-            dbg("Checking Name validity");
-            String rn=rnBox.Text();
-            rn.replace(" ","");
-            if(rn.length()<1) {
-                announce.ShowAlert(ui_txt.REALNAME_LENGTH);
-                return false;
-            }
-            return true;
-        }
-
-        boolean testAge(){
-            dbg("Checking age validity");
-            final Integer min_age=18;
-            try {
-                Date d=new Date();
-                Integer thisyear = d.getYear();
-                thisyear+=1900;
-                Integer yob = Integer.valueOf(bornBox.Text());
-                Integer age=thisyear - yob;
-                dbg("Age "+age.toString());
-                if(age < min_age) {
-                    announce.ShowAlert(ui_txt.AGE_TOO_YOUNG);
-                    return false;
-                }
-            }
-            catch (Exception e) {
-                announce.ShowAlert(ui_txt.AGE_TOO_YOUNG);
-                return false;
             }
             return true;
         }

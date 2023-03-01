@@ -15,6 +15,7 @@ public class ApplicationSettings {
     public static final String forTesting_Pass=PRIVATE_TESTING_PASS;
     public static final boolean TESTING=true;
     public static final String URL_MAIN=GAME_URL;
+    public static final Integer SplashTimeOut=1000;
     // the buildNumber can be generated automatically. Look in build.gradle to see how
     public final String buildNumber=Integer.toString(BuildConfig.VERSION_CODE);
     //    public final String versionName=BuildConfig.VERSION_NAME;

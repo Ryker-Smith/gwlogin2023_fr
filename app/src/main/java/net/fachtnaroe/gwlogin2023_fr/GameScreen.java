@@ -7,6 +7,7 @@ import com.google.appinventor.components.runtime.Form;
 import com.google.appinventor.components.runtime.HandlesEventDispatching;
 import com.google.appinventor.components.runtime.HorizontalArrangement;
 import com.google.appinventor.components.runtime.Label;
+import com.google.appinventor.components.runtime.Notifier;
 import com.google.appinventor.components.runtime.PasswordTextBox;
 import com.google.appinventor.components.runtime.TextBox;
 import com.google.appinventor.components.runtime.VerticalArrangement;
@@ -23,6 +24,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
     WebViewer wvGame;
     StatusBarTools statusBar;
     String token;
+    Notifier announce;
 
     protected void $define() {
 
@@ -45,15 +47,18 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         topMenu.WidthPercent(100);
         topMenu.HeightPercent(5);
         btl.WidthPercent(5);
+        lblTitleAtTop.WidthPercent(90);
+        btr.WidthPercent(5);
+
         btl.Height(Component.LENGTH_FILL_PARENT);
         btl.BackgroundColor(colors.MAIN_BACKGROUND);
         btl.Text("");
-        btr.WidthPercent(5);
+        btl.Image("BabyBurger01.png");
         btr.BackgroundColor(colors.MAIN_BACKGROUND);
-        btr.Text("");
+        btr.Text("R");
         btr.Height(Component.LENGTH_FILL_PARENT);
 
-        lblTitleAtTop.WidthPercent(90);
+        announce=new Notifier(this);
         lblTitleAtTop.TextColor(colors.HEADING_TEXT);
         lblTitleAtTop.Text("grassworld.fachtnaroe.net");
         lblTitleAtTop.FontTypeface(Ev3Constants.FontType.LARGE_FONT);
