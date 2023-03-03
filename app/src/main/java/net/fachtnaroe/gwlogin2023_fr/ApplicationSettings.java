@@ -10,7 +10,7 @@ import static net.fachtnaroe.gwlogin2023_fr.PrivateApplicationSettings.PRIVATE_T
 
 public class ApplicationSettings {
 
-    public static final String URL_LOGIN = CLOUD_VERIFICATION_URL;
+    public static final String URL_LOGIN = "https://grassworld.fachtnaroe.net/auth/";
     public static final String forTesting_User=PRIVATE_TESTING_USER;
     public static final String forTesting_Pass=PRIVATE_TESTING_PASS;
     public static final boolean TESTING=true;

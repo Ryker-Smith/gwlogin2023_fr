@@ -25,6 +25,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
     StatusBarTools statusBar;
     String token;
     Notifier announce;
+    WebViewQueue wvq;
 
     protected void $define() {
 
@@ -70,8 +71,11 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         wvGame.HomeUrl(ApplicationSettings.URL_MAIN);
         wvGame.GoHome();
 
+        wvq = new WebViewQueue(wvGame);
+
         EventDispatcher.registerEventForDelegation(this, formName, "BackPressed");
         EventDispatcher.registerEventForDelegation(this, formName, "Click");
+        EventDispatcher.registerEventForDelegation(this, formName, "WebViewStringChange");
     }
 
     public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
@@ -80,6 +84,9 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         if (eventName.equals("BackPressed")) {
             wvGame.GoBack();
             return true;
+        }
+        else if (eventName.equals("WebViewStringChange")) {
+              String msg = wvq.fromGame();
         }
         else if (eventName.equals("Click")) {
             if (component.equals(btl)) {
@@ -90,6 +97,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             }
             else if (component.equals(btr)) {
                 System.err.print("You pressed a button");
+                wvq.toGame("X");
                 // invert te timer status
 
                 return true;

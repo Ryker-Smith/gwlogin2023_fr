@@ -81,7 +81,6 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             usernameBox.WidthPercent(gridCenterWidth);
             usernameBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             usernameBox.TextColor(colors.TEXTBOX_TEXT);
-            usernameBox.Text("fachtna.roe@tcfe.ie");
             padBetween = new Label(gridCenter);
             padBetween.WidthPercent(gridCenterWidth);
             padBetween.HeightPercent(1);
@@ -101,7 +100,6 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             padAboveLogin = new Label(gridCenter);
             padAboveLogin.WidthPercent(100);
             padAboveLogin.HeightPercent(1);
-            passwordBox.Text("abscdef45K");
 
             lblRN = new Label(gridCenter);
             lblRN.TextColor(colors.MAIN_TEXT_MUCHO);
@@ -115,7 +113,6 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             rnBox.WidthPercent(gridCenterWidth);
             rnBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             rnBox.TextColor(colors.TEXTBOX_TEXT);
-            rnBox.Text("HHH");
 
             padAboveLogin = new Label(gridCenter);
             padAboveLogin.WidthPercent(100);
@@ -132,7 +129,6 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
             bornBox.WidthPercent(gridCenterWidth);
             bornBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             bornBox.TextColor(colors.TEXTBOX_TEXT);
-            bornBox.Text("1900");
 
             padBetweenLoginAndRegister = new Label(gridCenter);
             padBetweenLoginAndRegister.WidthPercent(100);

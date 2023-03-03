@@ -3,6 +3,7 @@ package net.fachtnaroe.gwlogin2023_fr;
 import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
 
 import com.google.appinventor.components.runtime.Button;
+import com.google.appinventor.components.runtime.CheckBox;
 import com.google.appinventor.components.runtime.Component;
 import com.google.appinventor.components.runtime.EventDispatcher;
 import com.google.appinventor.components.runtime.Form;
@@ -19,21 +20,22 @@ import com.google.appinventor.components.runtime.util.Ev3Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AccountAdminScreen extends Form implements HandlesEventDispatching {
         private
-        HorizontalArrangement grid;
+        HorizontalArrangement grid, buttonsLayout;
         VerticalArrangement gridCenter,  mainArrangement;;
         TextBox usernameBox;
         PasswordTextBox passwordBox, newPassBox1, newPassBox2;
-        Button btnRegister;
-        Label padTop, padBottom, padBetweenLoginAndRegister, lblU, padBetween, lblP, padAboveLogin;
+        Button btnAction;
+        Label padTop, padBottom, padBetweenPasswordsAndButton, lblU, padBetween, lblP, padAboveLogin;
         Label lblTitleAtTop, gridPadLeft, getGridPadRight, lblNewPass1, lblNewPass2;
-        Web webCheckExists, webRegister;
+        Web webDeleteAC, webChangePW;
         JSONObject jsonCredentials = new JSONObject();
+        CheckBox optionDeleteAC, optionChangePW;
+        CheckBox[] optionsList=new CheckBox[2];
         StatusBarTools statusBar;
         Notifier announce;
 
@@ -101,6 +103,14 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             passwordBox.TextColor(colors.TEXTBOX_TEXT);
             // put radio buttons here for delete/change password/do nothing?
 
+            buttonsLayout=new HorizontalArrangement(gridCenter);
+            optionChangePW = new CheckBox(buttonsLayout);
+            optionChangePW.Text(ui_txt.CHANGE_PASSWORD);
+            optionDeleteAC = new CheckBox(buttonsLayout);
+            optionDeleteAC.Text(ui_txt.CHANGE_DELETE);
+            optionsList[0]=optionChangePW;
+            optionsList[1]=optionDeleteAC;
+
             padAboveLogin = new Label(gridCenter);
             padAboveLogin.WidthPercent(100);
             padAboveLogin.HeightPercent(1);
@@ -134,14 +144,14 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             newPassBox2.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             newPassBox2.TextColor(colors.TEXTBOX_TEXT);
 
-            padBetweenLoginAndRegister = new Label(gridCenter);
-            padBetweenLoginAndRegister.WidthPercent(100);
-            padBetweenLoginAndRegister.HeightPercent(1);
-            btnRegister = new Button(gridCenter);
-            btnRegister.WidthPercent(gridCenterWidth);
-            btnRegister.Text(ui_txt.CHANGE_PASSWORD);
-            btnRegister.TextColor(colors.BUTTON_TEXT);
-            btnRegister.BackgroundColor(colors.BUTTON_BACKGROUND);
+            padBetweenPasswordsAndButton = new Label(gridCenter);
+            padBetweenPasswordsAndButton.WidthPercent(100);
+            padBetweenPasswordsAndButton.HeightPercent(1);
+            btnAction = new Button(gridCenter);
+            btnAction.WidthPercent(gridCenterWidth);
+            btnAction.Text(ui_txt.CHANGE_PASSWORD);
+            btnAction.TextColor(colors.BUTTON_TEXT);
+            btnAction.BackgroundColor(colors.BUTTON_BACKGROUND);
 
             padBottom = new Label(mainArrangement);
             padBottom.WidthPercent(100);
@@ -152,16 +162,29 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             padBottom.FontSize(20);
 
             announce=new Notifier(this);
-            webCheckExists = new Web(this);
-            webCheckExists.Url(ApplicationSettings.URL_LOGIN);
-            webRegister = new Web(this);
-            webRegister.Url(ApplicationSettings.URL_LOGIN);
+            webDeleteAC = new Web(this);
+            webDeleteAC.Url(ApplicationSettings.URL_LOGIN);
+            webDeleteAC = new Web(this);
+            webDeleteAC.Url(ApplicationSettings.URL_LOGIN);
 
             EventDispatcher.registerEventForDelegation(this, formName, "BackPressed");
             EventDispatcher.registerEventForDelegation(this, formName, "Click");
+            EventDispatcher.registerEventForDelegation(this, formName, "Changed");
             EventDispatcher.registerEventForDelegation(this, formName, "GotText");
+
         }
 
+        private void allOptionsOff(){
+            // this method of avoiding self-raised events can probably be improved upon
+            EventDispatcher.unregisterEventForDelegation(this, formName,"Changed");
+            for (CheckBox thing : optionsList) {
+//                dbg("AA "+thing.Text());
+                thing.Checked(false);
+            }
+            EventDispatcher.registerEventForDelegation(this, formName, "Changed");
+        }
+
+        @Override
         public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
 
             dbg("dispatchEvent: " + formName + " [" + component.toString() + "] [" + componentName + "] " + eventName);
@@ -169,40 +192,60 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                 Form.finishActivity();
                 return true;
             }
+            else if(eventName.equals("Changed")){
+//                if (component.equals(optionChangePW)) {
+//                    if (optionChangePW.Checked()) {
+//                        lblNewPass1.Visible(optionChangePW.Checked());
+//                        newPassBox1.Visible(optionChangePW.Checked());
+//                        lblNewPass2.Visible(optionChangePW.Checked());
+//                        newPassBox2.Visible(optionChangePW.Checked());
+//                    }
+//                }
+                allOptionsOff();
+                CheckBox tempComp;
+                tempComp=(CheckBox) component;
+                tempComp.Checked(true);
+                lblNewPass1.Visible(optionChangePW.Checked());
+                newPassBox1.Visible(optionChangePW.Checked());
+                lblNewPass2.Visible(optionChangePW.Checked());
+                newPassBox2.Visible(optionChangePW.Checked());
+                if (component.equals(optionChangePW)) {
+                    btnAction.Text(ui_txt.CHANGE_PASSWORD);
+                }
+                else {
+                    btnAction.Text(ui_txt.CHANGE_DELETE);
+                }
+                return true;
+            }
             else if (eventName.equals("Click")) {
-                if (component.equals(btnRegister)) {
-                    btnRegister.Enabled(false);
-                    btnRegister.Text(ui_txt.CHECKING);
+                if ((component.equals(btnAction)) && (optionDeleteAC.Checked())) {
+                    btnAction.Enabled(false);
+                    btnAction.Text(ui_txt.PROCESSING);
                     if (bits.isValidEmailAddress(usernameBox.Text())) {
-                        if(testPassword()) {
-                            try {
-                                jsonCredentials.put("action", "validate");
-                                jsonCredentials.put("user", usernameBox.Text());
-
-                                dbg("Sending: " + jsonCredentials.toString());
-                                String msg = jsonCredentials.toString();
-                                webCheckExists.PostText(msg);
-                                btnRegister.Text(ui_txt.CONNECTION_SENDING);
-                            }
-                            catch (Exception e) {
+                        try{
+                            jsonCredentials.put("action", "delete");
+                            jsonCredentials.put("user", usernameBox.Text());
+                            jsonCredentials.put("password", passwordBox.Text());
+                            dbg("Sending: " + jsonCredentials.toString());
+                            String msg = jsonCredentials.toString();
+                            webDeleteAC.PostText(msg);
+                            btnAction.Text(ui_txt.CONNECTION_SENDING);
+                        }
+                        catch (Exception e) {
                                 return false;
                             }
-                        }
-                        else {
-                            btnRegister.Enabled(true);
                         }
                     }
                     else {
                         announce.ShowAlert(ui_txt.REGISTER_INVALID_EMAIL);
-                        btnRegister.Enabled(true);
+                        btnAction.Enabled(true);
                     }
                     return true;
-                }
             }
             else if (eventName.equals("GotText")) {
-                if (component.equals(webCheckExists)) {
+                if (component.equals(webChangePW)) {
                     String status = params[1].toString();
-                    btnRegister.Text(ui_txt.PROCESSING);
+                    btnAction.Text(ui_txt.PROCESSING);
                     String textOfResponse = (String) params[3];
                     if (textOfResponse.equals("")) {
                         textOfResponse = status;
@@ -214,73 +257,30 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                                 String result = parser.getString("user");
                                 if(result.contentEquals("exists")){
                                     announce.ShowAlert(ui_txt.REGISTER_USER_EXISTS);
-                                    btnRegister.Enabled(true);
-                                    btnRegister.Text(ui_txt.REGISTER);
+                                    btnAction.Enabled(true);
+                                    btnAction.Text(ui_txt.REGISTER);
                                 }
                                 else {
-                                    // can create user
-                                    try {
-                                        jsonCredentials.put("action", "register");
-                                        jsonCredentials.put("user", usernameBox.Text());
-                                        jsonCredentials.put("password",passwordBox.Text());
-//                                        jsonCredentials.put("fullname",rnBox.Text());
-//                                        jsonCredentials.put("yob",bornBox.Text());
-                                        dbg("Registering: "+jsonCredentials.toString());
-                                        String msg=jsonCredentials.toString() ;
-                                        btnRegister.Text(ui_txt.WAITING);
-                                        webRegister.PostText(msg);
-                                    }
-                                    catch (Exception e) {
-                                        return false;
-                                    }
+
                                 }
                             }
                             else {
-                                btnRegister.Text(parser.getString("status"));
-                                btnRegister.Enabled(true);
+                                btnAction.Text(parser.getString("status"));
+                                btnAction.Enabled(true);
                             }
                         }
                         catch (JSONException e) {
-                            btnRegister.Text("error connecting " + status);
-                            btnRegister.Enabled(true);
+                            btnAction.Text("error connecting " + status);
+                            btnAction.Enabled(true);
                         }
                     }
                     else {
-                        btnRegister.Text("error connecting " + status);
-                        btnRegister.Enabled(true);
+                        btnAction.Text("error connecting " + status);
+                        btnAction.Enabled(true);
                     }
                     return true;
                 }
-                else  if (component.equals(webRegister)) {
-                    String status = params[1].toString();
-                    String textOfResponse = (String) params[3];
-                    btnRegister.Text(ui_txt.REGISTER);
-                    if (status.equals("200")) {
-                        try {
-                            JSONObject parser = new JSONObject(textOfResponse);
-                            if (parser.getString("status").equals("OK")) {
-                                String result = parser.getString("userid");
-                                if (Integer.parseInt(result)>0) {
-                                    announce.ShowAlert(ui_txt.HAPPY_WOOHOO);
-                                    padBottom.Text(ui_txt.HAPPY_WOOHOO);
-                                    btnRegister.Enabled(false);
-                                    btnRegister.Text(ui_txt.SUCCESS);
-                                    btnRegister.TextColor(colors.MAIN_BACKGROUND);
-                                    btnRegister.BackgroundColor(colors.MAIN_BACKGROUND);
-                                    usernameBox.Enabled(false);
-                                    passwordBox.Enabled(false);
-//                                    rnBox.Enabled(false);
-//                                    bornBox.Enabled(false);
-                                    return true;
-                                }
-                            }
-                        }
-                        catch (JSONException e){
-                            btnRegister.Enabled(true);
-                            return true;
-                        }
-                    }
-                }
+
             }
             // true means event has been handled by us (ie recognised)
             return false;
