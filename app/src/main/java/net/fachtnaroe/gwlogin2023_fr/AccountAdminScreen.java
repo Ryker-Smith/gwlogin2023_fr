@@ -149,9 +149,10 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             padBetweenPasswordsAndButton.HeightPercent(1);
             btnAction = new Button(gridCenter);
             btnAction.WidthPercent(gridCenterWidth);
-            btnAction.Text(ui_txt.CHANGE_PASSWORD);
+            btnAction.Text();
             btnAction.TextColor(colors.BUTTON_TEXT);
             btnAction.BackgroundColor(colors.BUTTON_BACKGROUND);
+            btnAction.Enabled(false);
 
             padBottom = new Label(mainArrangement);
             padBottom.WidthPercent(100);
@@ -215,6 +216,7 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                 else {
                     btnAction.Text(ui_txt.CHANGE_DELETE);
                 }
+                btnAction.Enabled(true);
                 return true;
             }
             else if (eventName.equals("Click")) {

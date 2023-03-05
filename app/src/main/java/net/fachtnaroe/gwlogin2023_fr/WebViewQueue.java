@@ -1,57 +1,82 @@
 package net.fachtnaroe.gwlogin2023_fr;
 
-import com.google.appinventor.components.runtime.WebViewer;
+import com.google.appinventor.components.runtime.Clock;
+import com.google.appinventor.components.runtime.Component;
+import com.google.appinventor.components.runtime.EventDispatcher;
+import com.google.appinventor.components.runtime.Form;
+import com.google.appinventor.components.runtime.HandlesEventDispatching;
 
-public class WebViewQueue {
+import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
+
+// Version/Date 2023-03-04-2055
+
+public class WebViewQueue extends Form implements HandlesEventDispatching {
     /* suggestion: name your variable of this type as 'wvq' so
     that your code would read as, eq:
-    wvq.toGame(cmd)
-    wvq.fromGame()
+        wvq.toGame(cmd)
+        wvq.fromGame()
      */
-    public final static byte queue_max=4;
+    private byte sequence_top=57, sequence_bot=48;
+    public final static Integer queue_max=0;
+    public static Integer default_timer=1000;
+    public static boolean busy;
     private static String[] queue_out =new String[queue_max + 1];
-    private static String inbound; // only one 'inbound' data item permitted
-    private static byte head;
-    private static WebViewer theobjectintheparent;
-    public static boolean I_Am_Sending;
+    private static Integer head;
+    private byte bop=sequence_bot;
+    private static grassworldWebViewer theWebView;
+    private HandlesEventDispatching containingForm;
+    public static Clock ticker;
 
-    public WebViewQueue(WebViewer wvcomponent){
+    @Override
+    public boolean canDispatchEvent(Component component, String s) {
+        return false;
+    }
+
+    @Override
+    public boolean dispatchEvent(Component component, String s, String s1, Object[] objects) {
+        return false;
+    }
+    public WebViewQueue(HandlesEventDispatching form, grassworldWebViewer wvcomponent){
+        super();
         // constructor
         head=0;
+        containingForm=form;
+        dbg("DD "+form.toString());
+
         for (int i=0; i<queue_max;i++){
             queue_out[i]="";
         }
+        theWebView=wvcomponent;
     }
 
-    boolean toGame(String cmd) {
-        // enqueue the instructiom
-        // if anything goes wrong, return false;
-        queue_out[head]=cmd;
-        I_Am_Sending=true;
+    public boolean toGame(String cmd) {
         head++;
-        if (head>queue_max) {
-            head=queue_max;
+        dbg("   toGame      ["+containingForm.toString()+"]");
+        EventDispatcher.unregisterEventForDelegation( this, containingForm.toString(), "modifiedWebViewStringChange");
+        String tmp=(char)bop+cmd;
+        theWebView.WebViewString(tmp);
+        if(bop>sequence_top){
+            bop=sequence_bot;
         }
-        theobjectintheparent.WebViewString(cmd);
-        // if we make it this far then
+        EventDispatcher.registerEventForDelegation( this, containingForm.toString(), "modifiedWebViewStringChange");
         return true;
     }
 
-    String fromGame(){
-        if (!I_Am_Sending) {
-            return inbound;
-        }
-        else{
-            I_Am_Sending=false;
-        }
-        return "";
+    public String fromGame(){
+        dbg("   fromGame    ["+containingForm.toString()+"]");
+        //EventDispatcher.unregisterEventForDelegation( this, containingForm.toString(), "fachtnaWebViewStringChange");
+        String recvd=theWebView.WebViewString();
+        //EventDispatcher.registerEventForDelegation( this, containingForm.toString(), "fachtnaWebViewStringChange");
+        return recvd;
     }
 
-    byte qSize(){
-        return 0;
+    public Integer qSize(){
+
+        return head;
     }
 
-    boolean qFull(){
+    public boolean qFull(){
+
         return false;
     }
 }

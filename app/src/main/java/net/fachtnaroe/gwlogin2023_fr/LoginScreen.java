@@ -48,7 +48,7 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
         lblTitleAtTop=new Label(mainArrangement);
         lblTitleAtTop.WidthPercent(100);
         lblTitleAtTop.TextColor(colors.HEADING_TEXT);
-        lblTitleAtTop.Text("\n\ngrassworld.fachtnaroe.net");
+        lblTitleAtTop.Text("\n\ngrassworld.fachtnaroe.net (build "+ApplicationSettings.buildNumber+")");
         lblTitleAtTop.FontTypeface(Ev3Constants.FontType.LARGE_FONT);
         lblTitleAtTop.FontTypeface(Component.TYPEFACE_MONOSPACE);
         lblTitleAtTop.TextAlignment(Component.ALIGNMENT_CENTER);

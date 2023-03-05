@@ -6,11 +6,26 @@ android {
     namespace 'net.fachtnaroe.gwlogin2023_fr'
     compileSdk 33
 
+    def versionPropsFile = file('frversion.properties')
+    def Properties versionProps = new Properties()
+
+    if (versionPropsFile.canRead()) {
+        versionProps.load(new FileInputStream(versionPropsFile))
+    }
+    else {
+        versionProps['VERSION_CODE']='0'
+    }
+
+    def frVersionCode = versionProps['VERSION_CODE'].toInteger() + 1
+
+    versionProps['VERSION_CODE']=frVersionCode.toString()
+    versionProps.store(versionPropsFile.newWriter(), null)
+    
     defaultConfig {
         applicationId "net.fachtnaroe.gwlogin2023_fr"
         minSdk 30
         targetSdk 33
-        versionCode 1
+        versionCode frVersionCode
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
