@@ -10,7 +10,7 @@ import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
 
 // Version/Date 2023-03-04-2055
 
-public class WebViewQueue extends Form implements HandlesEventDispatching {
+public class WebViewQueue extends Object {
     /* suggestion: name your variable of this type as 'wvq' so
     that your code would read as, eq:
         wvq.toGame(cmd)
@@ -27,22 +27,12 @@ public class WebViewQueue extends Form implements HandlesEventDispatching {
     private HandlesEventDispatching containingForm;
     public static Clock ticker;
 
-    @Override
-    public boolean canDispatchEvent(Component component, String s) {
-        return false;
-    }
-
-    @Override
-    public boolean dispatchEvent(Component component, String s, String s1, Object[] objects) {
-        return false;
-    }
     public WebViewQueue(HandlesEventDispatching form, grassworldWebViewer wvcomponent){
         super();
         // constructor
         head=0;
         containingForm=form;
         dbg("DD "+form.toString());
-
         for (int i=0; i<queue_max;i++){
             queue_out[i]="";
         }
@@ -52,13 +42,13 @@ public class WebViewQueue extends Form implements HandlesEventDispatching {
     public boolean toGame(String cmd) {
         head++;
         dbg("   toGame      ["+containingForm.toString()+"]");
-        EventDispatcher.unregisterEventForDelegation( this, containingForm.toString(), "modifiedWebViewStringChange");
+//        EventDispatcher.unregisterEventForDelegation( this, containingForm.toString(), "modifiedWebViewStringChange");
         String tmp=(char)bop+cmd;
         theWebView.WebViewString(tmp);
         if(bop>sequence_top){
             bop=sequence_bot;
         }
-        EventDispatcher.registerEventForDelegation( this, containingForm.toString(), "modifiedWebViewStringChange");
+//        EventDispatcher.registerEventForDelegation( this, containingForm.toString(), "modifiedWebViewStringChange");
         return true;
     }
 

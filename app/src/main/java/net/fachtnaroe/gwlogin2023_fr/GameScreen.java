@@ -12,6 +12,8 @@ import com.google.appinventor.components.runtime.VerticalArrangement;
 
 import com.google.appinventor.components.runtime.util.Ev3Constants;
 
+import org.json.JSONObject;
+
 import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
 
 public class GameScreen extends Form implements HandlesEventDispatching {
@@ -48,8 +50,8 @@ public class GameScreen extends Form implements HandlesEventDispatching {
 
         topMenu.WidthPercent(100);
         topMenu.HeightPercent(5);
-        btl.WidthPercent(5);
-        lblTitleAtTop.WidthPercent(85);
+        btl.WidthPercent(10);
+        lblTitleAtTop.WidthPercent(80);
         btr.WidthPercent(10);
 
         btl.Height(Component.LENGTH_FILL_PARENT);
@@ -57,7 +59,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         btl.Text("");
         btl.Image("BabyBurger01.png");
         btr.BackgroundColor(colors.RED);
-        btr.Text("R");
+        btr.Text("");
         btr.Height(Component.LENGTH_FILL_PARENT);
 
         announce=new Notifier(this);
@@ -91,12 +93,13 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         butRight.Height(LENGTH_FILL_PARENT);
         butRight.Text("\u25BA"); //►
         wvGame.ClearCaches();
-//        wvq = new WebViewQueue(this, wvGame);
 
         EventDispatcher.registerEventForDelegation(this, formName, "BackPressed");
         EventDispatcher.registerEventForDelegation(this, formName, "Click");
         EventDispatcher.registerEventForDelegation(this, formName, "WebViewStringChange");
         EventDispatcher.registerEventForDelegation(this, formName, "thingUpdate");
+        EventDispatcher.registerEventForDelegation(this, formName, "wvq_fromGame");
+        EventDispatcher.registerEventForDelegation(this, formName, "wvq_fromGame_clear");
     }
 
     public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
@@ -104,6 +107,11 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         dbg("dispatchEvent: [" + formName + "] [" + component.toString() + "] [" + componentName + "] " + eventName);
         if (eventName.equals("BackPressed")) {
             wvGame.GoBack();
+            return true;
+        }
+        else if (eventName.equals("WebViewStringChange")) {
+            String msg = wvGame.WebViewString();
+            dbg("WVS: "+msg);
             return true;
         }
         else if (eventName.equals("thingUpdate")) {
@@ -116,20 +124,18 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             dbg("From game: "+s);
             return true;
         }
-        else if (eventName.equals("WebViewStringChange")) {
-              String msg = wvGame.WebViewString();
-              dbg("WVS: "+msg);
-              return true;
+        else if (eventName.equals("wvq_fromGame_clear")) {
+            dbg("Clear from game: ");
+            return true;
         }
+
         else if (eventName.equals("Click")) {
             if (component.equals(btl)) {
-//                System.err.print("You pressed a button");
                 switchFormWithStartValue("AccountAdminScreen",token);
                 // invert te timer status
                 return true;
             }
             else if (component.equals(btr)) {
-                dbg("You pressed a button");
                 wvGame.GoHome();
                 // invert te timer status
                 return true;
@@ -152,14 +158,31 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             else if (component.equals(butRight)) {
                 dbg("key_right");
                 wvGame.toGame("__key_right");
+                String[] stringArray ={"keyCode","key_right","blash","ghblah"};
+                dbg(
+                        makeAsIf_JSON(stringArray)
+                );
                 return true;
             }
         }
         else if (eventName.equals("Timer")) {
             return true;
         }
-        // true means event has been handled by us (ie recognised)
         return false;
     }
 
+    String makeAsIf_JSON(String[] parts){
+        String result="";
+        if ((parts.length % 2) != 0) {
+            return "Error";
+        }
+        for (int i=0; i < (int) parts.length; i+=2) {
+            result= result + " \"" + parts[i] + "\" : \"" + parts[i+1]+"\"";
+            if ((i+2) != parts.length) {
+                result = result + ", ";
+            }
+        }
+        result = "{" + result + "}";
+        return result;
+    }
 }

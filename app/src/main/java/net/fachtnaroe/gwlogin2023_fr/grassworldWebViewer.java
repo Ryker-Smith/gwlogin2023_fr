@@ -203,7 +203,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         if (this.webview.canGoBack()) {
             this.webview.goBack();
         }
-
     }
 
     @SimpleFunction(
@@ -213,7 +212,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         if (this.webview.canGoForward()) {
             this.webview.goForward();
         }
-
     }
 
     @SimpleFunction(
@@ -273,7 +271,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         if (SdkLevel.getLevel() >= 5) {
             EclairUtil.clearWebViewGeoLoc();
         }
-
     }
 
     private void resetWebViewClient() {
@@ -282,7 +279,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         } else {
             this.webview.setWebViewClient(new grassworldWebViewer.WebViewerClient());
         }
-
     }
 
     @SimpleFunction(
@@ -335,8 +331,9 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
             return this.wvq_toGame;
         }
         @JavascriptInterface
-        public void fromAndroid(String clearingValue) {
-            this.wvq_toGame=clearingValue;
+        public void fromAndroid_clear() {
+            this.wvq_toGame="";
+            raiseEvent("wvq_fromGame_clear");
         }
         @JavascriptInterface
         public void toAndroid(String newString) {
@@ -349,7 +346,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
     public void raiseEvent(String customMessage) {
         EventDispatcher.dispatchEvent(this, customMessage, new Object[]{});
     }
-    // End Fachtna-added bits
 
     private class WebViewerClient extends WebViewClient {
         private WebViewerClient() {
