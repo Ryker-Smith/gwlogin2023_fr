@@ -144,6 +144,7 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
                     webAuthenticate.PostText(msg);
                 }
                 catch (Exception e) {
+                    dbg("error 147");
                     return false;
                 }
                 return true;

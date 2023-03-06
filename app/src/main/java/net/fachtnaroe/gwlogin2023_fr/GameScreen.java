@@ -23,7 +23,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
     HorizontalArrangement topMenu, botButtons;
     Label lblTitleAtTop;
     Button btl, btr;
-    Button butLeft, butRight, butUp, butDown;
+    Button butLeft, butRight, butUp, butDown, butMove;
     grassworldWebViewer wvGame;
     StatusBarTools statusBar;
     String token;
@@ -76,20 +76,26 @@ public class GameScreen extends Form implements HandlesEventDispatching {
 
         botButtons=new HorizontalArrangement(mainArrangement);
 
+        butMove=new Button(botButtons);
+        butMove.WidthPercent(20);
+        butMove.Height(LENGTH_FILL_PARENT);
+        butMove.Text("M");
+        butMove.TextAlignment(Component.ALIGNMENT_CENTER);
+
         butLeft=new Button(botButtons);
-        butLeft.WidthPercent(25);
+        butLeft.WidthPercent(20);
         butLeft.Height(LENGTH_FILL_PARENT);
         butLeft.Text("\u25C4");//◄
         butDown=new Button(botButtons);
-        butDown.WidthPercent(25);
+        butDown.WidthPercent(20);
         butDown.Height(LENGTH_FILL_PARENT);
         butDown.Text("\u25BC");  //▼
         butUp=new Button(botButtons);
-        butUp.WidthPercent(25);
+        butUp.WidthPercent(20);
         butUp.Height(LENGTH_FILL_PARENT);
         butUp.Text("\u25B2"); //▲
         butRight=new Button(botButtons);
-        butRight.WidthPercent(25);
+        butRight.WidthPercent(20);
         butRight.Height(LENGTH_FILL_PARENT);
         butRight.Text("\u25BA"); //►
         wvGame.ClearCaches();
@@ -98,8 +104,12 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         EventDispatcher.registerEventForDelegation(this, formName, "Click");
         EventDispatcher.registerEventForDelegation(this, formName, "WebViewStringChange");
         EventDispatcher.registerEventForDelegation(this, formName, "thingUpdate");
+
         EventDispatcher.registerEventForDelegation(this, formName, "wvq_fromGame");
         EventDispatcher.registerEventForDelegation(this, formName, "wvq_fromGame_clear");
+        // for the movement keys
+        /* EventDispatcher.registerEventForDelegation(this, formName, "TouchDown");
+        EventDispatcher.registerEventForDelegation(this, formName, "TouchUp"); */
     }
 
     public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
@@ -140,27 +150,38 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 // invert te timer status
                 return true;
             }
+            else if (component.equals(butMove)) {
+                dbg("key_move");
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_M"})
+                );
+                return true;
+            }
             else if (component.equals(butLeft)) {
                 dbg("key_left");
-                wvGame.toGame("__key_left");
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_left"})
+                );
                 return true;
             }
             else if (component.equals(butDown)) {
-                dbg("key_down");
-                wvGame.toGame("__key_down");
+                //dbg("key_down");
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_down"})
+                );
                 return true;
             }
             else if (component.equals(butUp)) {
                 dbg("key_up");
-                wvGame.toGame("__key_up");
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_up"})
+                );
                 return true;
             }
             else if (component.equals(butRight)) {
                 dbg("key_right");
-                wvGame.toGame("__key_right");
-                String[] stringArray ={"keyCode","key_right","blash","ghblah"};
-                dbg(
-                        makeAsIf_JSON(stringArray)
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_right"})
                 );
                 return true;
             }
@@ -171,18 +192,5 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         return false;
     }
 
-    String makeAsIf_JSON(String[] parts){
-        String result="";
-        if ((parts.length % 2) != 0) {
-            return "Error";
-        }
-        for (int i=0; i < (int) parts.length; i+=2) {
-            result= result + " \"" + parts[i] + "\" : \"" + parts[i+1]+"\"";
-            if ((i+2) != parts.length) {
-                result = result + ", ";
-            }
-        }
-        result = "{" + result + "}";
-        return result;
-    }
+    
 }

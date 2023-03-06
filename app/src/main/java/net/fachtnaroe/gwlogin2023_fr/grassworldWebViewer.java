@@ -38,6 +38,7 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
     private boolean followLinks = true;
     private boolean prompt = true;
     private boolean ignoreSslErrors = false;
+    private static Integer sequence_counter=1;
     grassworldWebViewer.WebViewInterface wvInterface;
 
     public grassworldWebViewer(ComponentContainer container) {
@@ -50,7 +51,7 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         this.webview.addJavascriptInterface(this.wvInterface, "AppInventor");
         this.webview.getSettings().setBuiltInZoomControls(true);
         if (SdkLevel.getLevel() >= 5) {
-//            EclairUtil.setupWebViewGeoLoc((com.google.appinventor.components.runtime.WebViewer)this, this.webview, container.$context());
+            // EclairUtil.setupWebViewGeoLoc((com.google.appinventor.components.runtime.WebViewer)this, this.webview, container.$context());
         }
 
         container.$add(this);
@@ -72,11 +73,18 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         this.Height(-2);
     }
 
+    public Integer getSequence(){
+        Integer temp=sequence_counter;
+        sequence_counter++;
+        return temp;
+    }
+
     @SimpleProperty(
             description = "Gets the WebView's String, which is viewable through Javascript in the WebView as the window.AppInventor object",
             category = PropertyCategory.BEHAVIOR
     )
     public String WebViewString() {
+
         return this.wvInterface.getWebViewString();
     }
     public String get_thingUpdates(){
@@ -327,13 +335,13 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         // for the web page use to/from Android
         @JavascriptInterface
         public String fromAndroid() {
-
+            // the browser sees 'fromAndroid' and the Android sees 'toGame'
             return this.wvq_toGame;
         }
         @JavascriptInterface
         public void fromAndroid_clear() {
             this.wvq_toGame="";
-            raiseEvent("wvq_fromGame_clear");
+            //raiseEvent("wvq_fromGame_clear");
         }
         @JavascriptInterface
         public void toAndroid(String newString) {
@@ -354,5 +362,21 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             return !grassworldWebViewer.this.followLinks;
         }
+    }
+
+    public String as_JSON(String[] parts){
+        String result="";
+        if ((parts.length % 2) != 0) {
+            return "Error";
+        }
+        result=result + "\"sequence\" : \"" + this.getSequence().toString() +"\",";
+        for (int i=0; i < (int) parts.length; i+=2) {
+            result= result + " \"" + parts[i] + "\" : \"" + parts[i+1]+"\"";
+            if ((i+2) != parts.length) {
+                result = result + ", ";
+            }
+        }
+        result = "{" + result + "}";
+        return result;
     }
 }

@@ -190,6 +190,7 @@ public class RegistrationScreen extends Form implements HandlesEventDispatching 
                     }
                     else {
                         announce.ShowAlert(ui_txt.REGISTER_INVALID_EMAIL);
+
                         btnRegister.Enabled(true);
                     }
                     return true;
