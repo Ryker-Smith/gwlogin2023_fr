@@ -1,5 +1,7 @@
 package net.fachtnaroe.gwlogin2023_fr;
 
+import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
+
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
@@ -335,7 +337,7 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         // for the web page use to/from Android
         @JavascriptInterface
         public String fromAndroid() {
-            // the browser sees 'fromAndroid' and the Android sees 'toGame'
+            // the game (browser) sees 'fromAndroid' and the Android sees 'toGame'
             return this.wvq_toGame;
         }
         @JavascriptInterface
@@ -377,6 +379,7 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
             }
         }
         result = "{" + result + "}";
+//        dbg(result);
         return result;
     }
 }

@@ -16,6 +16,7 @@ public class ApplicationSettings {
     public static final boolean TESTING=true;
     public static final String URL_MAIN=GAME_URL;
     public static final Integer SplashTimeOut=250;
+    public static Integer retransmitTicker_interval=100;
     // the buildNumber can be generated automatically. Look in build.gradle to see how
     public static final String buildNumber=Integer.toString(BuildConfig.VERSION_CODE);
     //    public final String versionName=BuildConfig.VERSION_NAME;

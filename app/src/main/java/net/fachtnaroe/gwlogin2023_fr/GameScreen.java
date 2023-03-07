@@ -1,6 +1,7 @@
 package net.fachtnaroe.gwlogin2023_fr;
 
 import com.google.appinventor.components.runtime.Button;
+import com.google.appinventor.components.runtime.Clock;
 import com.google.appinventor.components.runtime.Component;
 import com.google.appinventor.components.runtime.EventDispatcher;
 import com.google.appinventor.components.runtime.Form;
@@ -26,9 +27,9 @@ public class GameScreen extends Form implements HandlesEventDispatching {
     Button butLeft, butRight, butUp, butDown, butMove;
     grassworldWebViewer wvGame;
     StatusBarTools statusBar;
-    String token;
+    String token, retransmitTicker_key;
     Notifier announce;
-//    WebViewQueue wvq;
+    Clock retransmitTicker;
 
     protected void $define() {
 
@@ -100,16 +101,20 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         butRight.Text("\u25BA"); //►
         wvGame.ClearCaches();
 
+        retransmitTicker=new Clock(mainArrangement);
+        retransmitTicker.TimerInterval(ApplicationSettings.retransmitTicker_interval);
+        retransmitTicker.TimerEnabled(false);
+
         EventDispatcher.registerEventForDelegation(this, formName, "BackPressed");
         EventDispatcher.registerEventForDelegation(this, formName, "Click");
         EventDispatcher.registerEventForDelegation(this, formName, "WebViewStringChange");
         EventDispatcher.registerEventForDelegation(this, formName, "thingUpdate");
-
+        EventDispatcher.registerEventForDelegation(this, formName, "Timer");
         EventDispatcher.registerEventForDelegation(this, formName, "wvq_fromGame");
         EventDispatcher.registerEventForDelegation(this, formName, "wvq_fromGame_clear");
         // for the movement keys
-        /* EventDispatcher.registerEventForDelegation(this, formName, "TouchDown");
-        EventDispatcher.registerEventForDelegation(this, formName, "TouchUp"); */
+        EventDispatcher.registerEventForDelegation(this, formName, "TouchDown");
+        EventDispatcher.registerEventForDelegation(this, formName, "TouchUp");
     }
 
     public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
@@ -138,11 +143,51 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             dbg("Clear from game: ");
             return true;
         }
-
+        else if (eventName.equals("TouchDown")) {
+            if (component.equals(butLeft)) {
+                dbg("key_left");
+                retransmitTicker_key="key_left";
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
+                );
+                retransmitTicker.TimerEnabled(true);
+                return true;
+            }
+            else if (component.equals(butDown)) {
+                dbg("key_down");
+                retransmitTicker_key="key_down";
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
+                );
+                retransmitTicker.TimerEnabled(true);
+                return true;
+            }
+            else if (component.equals(butUp)) {
+                dbg("key_up");
+                retransmitTicker_key="key_up";
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
+                );
+                retransmitTicker.TimerEnabled(true);
+                return true;
+            }
+            else if (component.equals(butRight)) {
+                dbg("key_right");
+                retransmitTicker_key="key_right";
+                wvGame.toGame(
+                        wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
+                );
+                retransmitTicker.TimerEnabled(true);
+                return true;
+            }
+        }
+        else if (eventName.equals("TouchUp")) {
+            retransmitTicker.TimerEnabled(false);
+            return true;
+        }
         else if (eventName.equals("Click")) {
             if (component.equals(btl)) {
                 switchFormWithStartValue("AccountAdminScreen",token);
-                // invert te timer status
                 return true;
             }
             else if (component.equals(btr)) {
@@ -157,37 +202,19 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 );
                 return true;
             }
-            else if (component.equals(butLeft)) {
-                dbg("key_left");
-                wvGame.toGame(
-                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_left"})
-                );
-                return true;
-            }
-            else if (component.equals(butDown)) {
-                //dbg("key_down");
-                wvGame.toGame(
-                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_down"})
-                );
-                return true;
-            }
-            else if (component.equals(butUp)) {
-                dbg("key_up");
-                wvGame.toGame(
-                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_up"})
-                );
-                return true;
-            }
-            else if (component.equals(butRight)) {
-                dbg("key_right");
-                wvGame.toGame(
-                        wvGame.as_JSON(new String[] {"type","key","keyCode","key_right"})
-                );
-                return true;
-            }
+
         }
         else if (eventName.equals("Timer")) {
-            return true;
+            if (component.equals(retransmitTicker)) {
+                retransmitTicker.TimerEnabled(false);
+                String msg=wvGame.as_JSON(new String[] {"type","key","keyCode", retransmitTicker_key});
+                dbg(msg);
+                wvGame.toGame(
+                        msg
+                );
+                retransmitTicker.TimerEnabled(true);
+                return true;
+            }
         }
         return false;
     }
