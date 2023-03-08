@@ -40,7 +40,8 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
     private boolean followLinks = true;
     private boolean prompt = true;
     private boolean ignoreSslErrors = false;
-    private static Integer sequence_counter=1;
+    // using unsigned so that overflow will be a wrap-around, and long to reduce the frequency of either
+    private static unsigned long sequence_counter=1;
     grassworldWebViewer.WebViewInterface wvInterface;
 
     public grassworldWebViewer(ComponentContainer container) {
@@ -76,9 +77,13 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
     }
 
     public Integer getSequence(){
-        Integer temp=sequence_counter;
-        sequence_counter++;
-        return temp;
+        /* simultanbeously return and increment the sequence counter
+        the variable is unsigned long so overflow will be automatically
+         wrapped-around at overflow. Plus, the variable is type long,
+         which has an upper limit of a gazillion quinty billion, approx.
+         */
+
+        return sequence_counter++;
     }
 
     @SimpleProperty(
@@ -86,7 +91,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
             category = PropertyCategory.BEHAVIOR
     )
     public String WebViewString() {
-
         return this.wvInterface.getWebViewString();
     }
     public String get_thingUpdates(){
@@ -115,7 +119,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         if (width == -1) {
             width = -2;
         }
-
         super.Width(width);
     }
 
@@ -369,7 +372,7 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
     public String as_JSON(String[] parts){
         String result="";
         if ((parts.length % 2) != 0) {
-            return "Error";
+            return "Error: uneven parameter list";
         }
         result=result + "\"sequence\" : \"" + this.getSequence().toString() +"\",";
         for (int i=0; i < (int) parts.length; i+=2) {
@@ -379,7 +382,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
             }
         }
         result = "{" + result + "}";
-//        dbg(result);
         return result;
     }
 }
