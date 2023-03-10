@@ -41,7 +41,9 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
     private boolean prompt = true;
     private boolean ignoreSslErrors = false;
     // using unsigned so that overflow will be a wrap-around, and long to reduce the frequency of either
-    private static unsigned long sequence_counter=1;
+    //private static unsigned long sequence_counter=1;
+    // why was I able to use 'unsigned' in one compilation, but cannot now????????
+    private static long sequence_counter=1;
     grassworldWebViewer.WebViewInterface wvInterface;
 
     public grassworldWebViewer(ComponentContainer container) {
@@ -76,13 +78,15 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         this.Height(-2);
     }
 
-    public Integer getSequence(){
+    public long getSequence(){
         /* simultanbeously return and increment the sequence counter
         the variable is unsigned long so overflow will be automatically
          wrapped-around at overflow. Plus, the variable is type long,
          which has an upper limit of a gazillion quinty billion, approx.
          */
-
+        if (sequence_counter < 0) {
+            sequence_counter=0;
+        }
         return sequence_counter++;
     }
 
@@ -374,7 +378,8 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         if ((parts.length % 2) != 0) {
             return "Error: uneven parameter list";
         }
-        result=result + "\"sequence\" : \"" + this.getSequence().toString() +"\",";
+
+        result=result + "\"sequence\" : \"" + String.valueOf(this.getSequence()) +"\",";
         for (int i=0; i < (int) parts.length; i+=2) {
             result= result + " \"" + parts[i] + "\" : \"" + parts[i+1]+"\"";
             if ((i+2) != parts.length) {
