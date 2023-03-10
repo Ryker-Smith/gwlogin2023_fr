@@ -355,7 +355,6 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         @JavascriptInterface
         public void fromAndroid_clear() {
             this.wvq_toGame="";
-            //raiseEvent("wvq_fromGame_clear");
         }
         @JavascriptInterface
         public void toAndroid(String newString) {

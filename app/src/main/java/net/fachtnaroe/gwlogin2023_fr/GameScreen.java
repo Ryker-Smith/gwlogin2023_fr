@@ -59,7 +59,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         btl.BackgroundColor(colors.MAIN_BACKGROUND);
         btl.Text("");
         btl.Image("BabyBurger01.png");
-        btr.BackgroundColor(colors.RED);
+        btr.Image("Reload01.png");
         btr.Text("");
         btr.Height(Component.LENGTH_FILL_PARENT);
 
@@ -124,19 +124,19 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             wvGame.GoBack();
             return true;
         }
-        else if (eventName.equals("WebViewStringChange")) {
-            String msg = wvGame.WebViewString();
-            dbg("WVS: "+msg);
-            return true;
-        }
-        else if (eventName.equals("thingUpdate")) {
-            String s=wvGame.get_thingUpdates();
-            dbg("Updates: "+s);
-            return true;
-        }
+//        else if (eventName.equals("WebViewStringChange")) {
+//            String msg = wvGame.WebViewString();
+//            dbg("WVS: "+msg);
+//            return true;
+//        }
+//        else if (eventName.equals("thingUpdate")) {
+//            String s=wvGame.get_thingUpdates();
+//            dbg("Updates: "+s);
+//            return true;
+//        }
         else if (eventName.equals("wvq_fromGame")) {
             String s=wvGame.fromGame();
-            dbg("From game: "+s);
+//            dbg("From game: "+s);
             return true;
         }
         else if (eventName.equals("wvq_fromGame_clear")) {
@@ -145,7 +145,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         }
         else if (eventName.equals("TouchDown")) {
             if (component.equals(butLeft)) {
-                dbg("key_left");
+//                dbg("key_left");
                 retransmitTicker_key="key_left";
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
@@ -154,7 +154,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 return true;
             }
             else if (component.equals(butDown)) {
-                dbg("key_down");
+//                dbg("key_down");
                 retransmitTicker_key="key_down";
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
@@ -163,7 +163,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 return true;
             }
             else if (component.equals(butUp)) {
-                dbg("key_up");
+//                dbg("key_up");
                 retransmitTicker_key="key_up";
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
@@ -172,7 +172,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 return true;
             }
             else if (component.equals(butRight)) {
-                dbg("key_right");
+//                dbg("key_right");
                 retransmitTicker_key="key_right";
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
@@ -196,19 +196,18 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 return true;
             }
             else if (component.equals(butMove)) {
-                dbg("key_move");
+//                dbg("key_move");
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode","key_M"})
                 );
                 return true;
             }
-
         }
         else if (eventName.equals("Timer")) {
             if (component.equals(retransmitTicker)) {
                 retransmitTicker.TimerEnabled(false);
                 String msg=wvGame.as_JSON(new String[] {"type","key","keyCode", retransmitTicker_key});
-                dbg(msg);
+//                dbg(msg);
                 wvGame.toGame(
                         msg
                 );
@@ -218,6 +217,4 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         }
         return false;
     }
-
-    
 }

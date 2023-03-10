@@ -179,7 +179,6 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             // this method of avoiding self-raised events can probably be improved upon
             EventDispatcher.unregisterEventForDelegation(this, formName,"Changed");
             for (CheckBox thing : optionsList) {
-//                dbg("AA "+thing.Text());
                 thing.Checked(false);
             }
             EventDispatcher.registerEventForDelegation(this, formName, "Changed");
@@ -194,14 +193,14 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                 return true;
             }
             else if(eventName.equals("Changed")){
-//                if (component.equals(optionChangePW)) {
-//                    if (optionChangePW.Checked()) {
-//                        lblNewPass1.Visible(optionChangePW.Checked());
-//                        newPassBox1.Visible(optionChangePW.Checked());
-//                        lblNewPass2.Visible(optionChangePW.Checked());
-//                        newPassBox2.Visible(optionChangePW.Checked());
-//                    }
-//                }
+                if (component.equals(optionChangePW)) {
+                    if (optionChangePW.Checked()) {
+                        lblNewPass1.Visible(optionChangePW.Checked());
+                        newPassBox1.Visible(optionChangePW.Checked());
+                        lblNewPass2.Visible(optionChangePW.Checked());
+                        newPassBox2.Visible(optionChangePW.Checked());
+                    }
+                }
                 allOptionsOff();
                 CheckBox tempComp;
                 tempComp=(CheckBox) component;
@@ -236,12 +235,12 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                         catch (Exception e) {
                                 return false;
                             }
-                        }
                     }
-                    else {
-                        announce.ShowAlert(ui_txt.REGISTER_INVALID_EMAIL);
-                        btnAction.Enabled(true);
-                    }
+                }
+                else {
+                    announce.ShowAlert(ui_txt.REGISTER_INVALID_EMAIL);
+                    btnAction.Enabled(true);
+                }
                     return true;
             }
             else if (eventName.equals("GotText")) {
@@ -249,9 +248,6 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                     String status = params[1].toString();
                     btnAction.Text(ui_txt.PROCESSING);
                     String textOfResponse = (String) params[3];
-                    if (textOfResponse.equals("")) {
-                        textOfResponse = status;
-                    }
                     if (status.equals("200")) {
                         try {
                             JSONObject parser = new JSONObject(textOfResponse);
@@ -281,6 +277,9 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                         btnAction.Enabled(true);
                     }
                     return true;
+                }
+                else if() {
+
                 }
 
             }
