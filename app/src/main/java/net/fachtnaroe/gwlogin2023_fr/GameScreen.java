@@ -119,7 +119,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
 
     public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
 
-        dbg("dispatchEvent: [" + formName + "] [" + component.toString() + "] [" + componentName + "] " + eventName);
+//        dbg("dispatchEvent: [" + formName + "] [" + component.toString() + "] [" + componentName + "] " + eventName);
         if (eventName.equals("BackPressed")) {
             wvGame.GoBack();
             return true;

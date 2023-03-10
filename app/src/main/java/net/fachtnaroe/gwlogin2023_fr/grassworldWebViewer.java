@@ -1,7 +1,5 @@
 package net.fachtnaroe.gwlogin2023_fr;
 
-import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
-
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,6 +41,7 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
     // using unsigned so that overflow will be a wrap-around, and long to reduce the frequency of either
     //private static unsigned long sequence_counter=1;
     // why was I able to use 'unsigned' in one compilation, but cannot now????????
+    // both inbound and outbound messages use the same counter variable
     private static long sequence_counter=1;
     grassworldWebViewer.WebViewInterface wvInterface;
 
@@ -78,11 +77,17 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
         this.Height(-2);
     }
 
+    public long readOnly_Sequence(){
+        // the readOnly_Sequence value may not be current
+        return sequence_counter;
+    }
     public long getSequence(){
         /* simultanbeously return and increment the sequence counter
         the variable is unsigned long so overflow will be automatically
          wrapped-around at overflow. Plus, the variable is type long,
          which has an upper limit of a gazillion quinty billion, approx.
+
+         UNSIGNED not working in Java.... aaargh
          */
         if (sequence_counter < 0) {
             sequence_counter=0;
@@ -357,6 +362,12 @@ public final class grassworldWebViewer extends AndroidViewComponent  {
             this.wvq_fromGame = newString;
             raiseEvent("wvq_fromGame");
         }
+        @JavascriptInterface
+        public String asIfJSON(String[] parts){
+
+            return as_JSON(parts);
+        }
+
     }
 
     @SimpleEvent
