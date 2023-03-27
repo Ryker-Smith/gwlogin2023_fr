@@ -23,14 +23,13 @@ public class GameScreen extends Form implements HandlesEventDispatching {
     VerticalArrangement mainArrangement;
     HorizontalArrangement topMenu, botButtons;
     Label lblTitleAtTop;
-    Button btl, btr;
+    Button btl, btr, butNewChar;
     Button butLeft, butRight, butUp, butDown, butMove;
     grassworldWebViewer wvGame;
     StatusBarTools statusBar;
     String token, retransmitTicker_key;
     Notifier announce;
     Clock retransmitTicker;
-
     protected void $define() {
 
         this.Sizing("Responsive");
@@ -59,7 +58,7 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         btl.BackgroundColor(colors.MAIN_BACKGROUND);
         btl.Text("");
         btl.Image("BabyBurger01.png");
-        btr.Image("Reload01.png");
+        btr.Image("Reload02.png");
         btr.Text("");
         btr.Height(Component.LENGTH_FILL_PARENT);
 
@@ -75,30 +74,43 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         wvGame.HomeUrl(ApplicationSettings.URL_MAIN);
         wvGame.GoHome();
 
+        Integer butCount=6;
+        Integer butSize=Math.round( (int) 100/butCount);
+
         botButtons=new HorizontalArrangement(mainArrangement);
 
+        butNewChar=new Button(botButtons);
+        butNewChar.WidthPercent(butSize);
+        butNewChar.Height(LENGTH_FILL_PARENT);
+        butNewChar.Text("N");
+        butNewChar.TextAlignment(Component.ALIGNMENT_CENTER);
+
         butMove=new Button(botButtons);
-        butMove.WidthPercent(20);
+        butMove.WidthPercent(butSize);
         butMove.Height(LENGTH_FILL_PARENT);
         butMove.Text("M");
         butMove.TextAlignment(Component.ALIGNMENT_CENTER);
 
+
         butLeft=new Button(botButtons);
-        butLeft.WidthPercent(20);
+        butLeft.WidthPercent(butSize);
         butLeft.Height(LENGTH_FILL_PARENT);
         butLeft.Text("\u25C4");//◄
         butDown=new Button(botButtons);
-        butDown.WidthPercent(20);
+        butDown.WidthPercent(butSize);
         butDown.Height(LENGTH_FILL_PARENT);
         butDown.Text("\u25BC");  //▼
         butUp=new Button(botButtons);
-        butUp.WidthPercent(20);
+        butUp.WidthPercent(butSize);
         butUp.Height(LENGTH_FILL_PARENT);
         butUp.Text("\u25B2"); //▲
         butRight=new Button(botButtons);
-        butRight.WidthPercent(20);
+        butRight.WidthPercent(butSize);
         butRight.Height(LENGTH_FILL_PARENT);
         butRight.Text("\u25BA"); //►
+        if ((butCount * butSize) <100) {
+            butRight.Width(Component.LENGTH_FILL_PARENT);
+        }
         wvGame.ClearCaches();
 
         retransmitTicker=new Clock(mainArrangement);
@@ -124,19 +136,8 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             wvGame.GoBack();
             return true;
         }
-//        else if (eventName.equals("WebViewStringChange")) {
-//            String msg = wvGame.WebViewString();
-//            dbg("WVS: "+msg);
-//            return true;
-//        }
-//        else if (eventName.equals("thingUpdate")) {
-//            String s=wvGame.get_thingUpdates();
-//            dbg("Updates: "+s);
-//            return true;
-//        }
         else if (eventName.equals("wvq_fromGame")) {
             String s=wvGame.fromGame();
-//            dbg("From game: "+s);
             return true;
         }
         else if (eventName.equals("wvq_fromGame_clear")) {
@@ -145,7 +146,6 @@ public class GameScreen extends Form implements HandlesEventDispatching {
         }
         else if (eventName.equals("TouchDown")) {
             if (component.equals(butLeft)) {
-//                dbg("key_left");
                 retransmitTicker_key="key_left";
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
@@ -154,7 +154,6 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 return true;
             }
             else if (component.equals(butDown)) {
-//                dbg("key_down");
                 retransmitTicker_key="key_down";
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
@@ -163,7 +162,6 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 return true;
             }
             else if (component.equals(butUp)) {
-//                dbg("key_up");
                 retransmitTicker_key="key_up";
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
@@ -172,7 +170,6 @@ public class GameScreen extends Form implements HandlesEventDispatching {
                 return true;
             }
             else if (component.equals(butRight)) {
-//                dbg("key_right");
                 retransmitTicker_key="key_right";
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode",retransmitTicker_key})
@@ -192,14 +189,17 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             }
             else if (component.equals(btr)) {
                 wvGame.GoHome();
-                // invert te timer status
+                // invert the timer status
                 return true;
             }
             else if (component.equals(butMove)) {
-//                dbg("key_move");
                 wvGame.toGame(
                         wvGame.as_JSON(new String[] {"type","key","keyCode","key_M"})
                 );
+                return true;
+            }
+            else if (component.equals(butNewChar)) {
+                wvGame.GoToUrl("https://grassworld.fachtnaroe.net/thingedit/?mode=mobile");
                 return true;
             }
         }
@@ -207,7 +207,6 @@ public class GameScreen extends Form implements HandlesEventDispatching {
             if (component.equals(retransmitTicker)) {
                 retransmitTicker.TimerEnabled(false);
                 String msg=wvGame.as_JSON(new String[] {"type","key","keyCode", retransmitTicker_key});
-//                dbg(msg);
                 wvGame.toGame(
                         msg
                 );

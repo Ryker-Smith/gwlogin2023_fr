@@ -59,9 +59,11 @@ class ui_txt {
     static final String NEW_PASSWORD="New password";
     static final String CONFIRM_NEW_PASSWORD="Confirm new password";
     static final String CHANGE_PASSWORD="Change password";
+    static final String PASSWORD_MISMATCH="New passwords must match";
     static final String CHANGE_DELETE="Delete my account";
     static final String YES="Yes";
     static final String NO="No";
     static final String CONFIRM_DELETE="Please confirm removal of your account";
+    static final String CHANGE_DELETE_DONE="Account deleted";
 
 }

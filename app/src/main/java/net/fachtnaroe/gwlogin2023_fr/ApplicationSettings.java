@@ -11,28 +11,15 @@ import static net.fachtnaroe.gwlogin2023_fr.PrivateApplicationSettings.PRIVATE_T
 public class ApplicationSettings {
 
     public static final String URL_LOGIN = "https://grassworld.fachtnaroe.net/auth/";
-    public static final String forTesting_User=PRIVATE_TESTING_USER;
-    public static final String forTesting_Pass=PRIVATE_TESTING_PASS;
-    public static final boolean TESTING=true;
     public static final String URL_MAIN=GAME_URL;
     public static final Integer SplashTimeOut=250;
+    public static String myUserIs="";
     public static Integer retransmitTicker_interval=100;
     // the buildNumber can be generated automatically. Look in build.gradle to see how
     public static final String buildNumber=Integer.toString(BuildConfig.VERSION_CODE);
     //    public final String versionName=BuildConfig.VERSION_NAME;
-
-
-    public Boolean showStartingMessage=true;
-    // the countdown controls whether the "skip starting message" option is shown.
-    public Integer startingMessageCountdown=5;
-    // a general yes/no flag <0 unconfigured, >0 configured
-    public Integer configurationStatus=-1;
+    public static boolean TESTING=false;
     TinyDB localDB;
-    private static final String str_showStartingMessage="showStartingMessage";
-    private static final String str_startingMessageCountdown="WhatALongWindedWayOfDoingThis";
-    private static final String str_configurationStatus="configurationStatus";
-    // providing a NAME_DEFAULT_DEVICE saves on testing/debugging time
-//    public static final String default_DEVICE_NAME ="TCFE-CO2-98-88";
 
     public ApplicationSettings(ComponentContainer screenName){
         localDB= new TinyDB(screenName);
@@ -40,9 +27,8 @@ public class ApplicationSettings {
 
     public boolean get () {
         try {
-            showStartingMessage=(boolean) localDB.GetValue(str_showStartingMessage,showStartingMessage);
-            startingMessageCountdown=(Integer) localDB.GetValue(str_startingMessageCountdown,startingMessageCountdown);
-            configurationStatus=(Integer) localDB.GetValue(str_configurationStatus, configurationStatus);
+            myUserIs=(String) localDB.GetValue("useremailname","");
+//            configurationStatus=(Integer) localDB.GetValue(str_configurationStatus, configurationStatus);
             return true;
         }
         catch (Exception e) {
@@ -52,9 +38,8 @@ public class ApplicationSettings {
 
     public boolean set () {
         try {
-            localDB.StoreValue(str_showStartingMessage, showStartingMessage);
-            localDB.StoreValue(str_startingMessageCountdown,startingMessageCountdown);
-            localDB.StoreValue(str_configurationStatus, configurationStatus);
+            localDB.StoreValue("useremailname", myUserIs);
+              //localDB.StoreValue(str_configurationStatus, configurationStatus);
             return true;
         }
         catch (Exception e) {
@@ -62,12 +47,5 @@ public class ApplicationSettings {
         }
     }
 
-    String makeGetString(String sensor){
-        String test1 = this.URL_MAIN+"?device=";
-        test1+= "";
-        test1+="&";
-        test1+="sensor="+sensor;
-        return test1;
-    }
 }
 

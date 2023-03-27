@@ -32,6 +32,7 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
     Web webAuthenticate;
     JSONObject jsonCredentials=new JSONObject();
     StatusBarTools statusBar;
+    ApplicationSettings mySettings;
 
     protected void $define() {
 
@@ -44,11 +45,12 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
         statusBar=new StatusBarTools(mainArrangement);
         statusBar.BGTransparentColor("#00000000");
         statusBar.BackgroundColor("#00000000");
+        mySettings= new ApplicationSettings(this);
 
         lblTitleAtTop=new Label(mainArrangement);
         lblTitleAtTop.WidthPercent(100);
         lblTitleAtTop.TextColor(colors.HEADING_TEXT);
-        lblTitleAtTop.Text("\n\ngrassworld.fachtnaroe.net (build "+ApplicationSettings.buildNumber+")");
+        lblTitleAtTop.Text("\n\ngrassworld.fachtnaroe.net (build "+mySettings.buildNumber+")");
         lblTitleAtTop.FontTypeface(Ev3Constants.FontType.LARGE_FONT);
         lblTitleAtTop.FontTypeface(Component.TYPEFACE_MONOSPACE);
         lblTitleAtTop.TextAlignment(Component.ALIGNMENT_CENTER);
@@ -77,6 +79,8 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
         usernameBox.WidthPercent(gridCenterWidth);
         usernameBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
         usernameBox.TextColor(colors.TEXTBOX_TEXT);
+        usernameBox.Text(mySettings.myUserIs);
+
         padBetween=new Label(gridCenter);
         padBetween.WidthPercent(gridCenterWidth);
         padBetween.HeightPercent(1);
@@ -113,10 +117,6 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
         padBottom.Height(Component.LENGTH_FILL_PARENT);
         webAuthenticate=new Web(this);
         webAuthenticate.Url(ApplicationSettings.URL_LOGIN);
-        if(ApplicationSettings.TESTING) {
-            usernameBox.Text(ApplicationSettings.forTesting_User);
-            passwordBox.Text(ApplicationSettings.forTesting_Pass);
-        }
 
         EventDispatcher.registerEventForDelegation(this, formName, "BackPressed");
         EventDispatcher.registerEventForDelegation(this, formName, "Click");
@@ -135,6 +135,7 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
                 btnLogin.Text(ui_txt.CONNECTION_SENDING);
                 btnLogin.Enabled(false);
                 System.err.print("You pressed a button");
+                usernameBox.Text(usernameBox.Text().toLowerCase());
                 try {
                     jsonCredentials.put("action", "login");
                     jsonCredentials.put("user", usernameBox.Text());
@@ -172,6 +173,8 @@ public class LoginScreen extends Form implements HandlesEventDispatching {
                         else{
                             String token=parser.getString("token");
                             btnLogin.Text(ui_txt.STARTING);
+                            mySettings.myUserIs= usernameBox.Text();
+                            mySettings.set();
                             switchFormWithStartValue("GameScreen",token);
                         }
                     }

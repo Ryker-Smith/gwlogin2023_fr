@@ -1,5 +1,7 @@
 package net.fachtnaroe.gwlogin2023_fr;
 
+import android.app.Application;
+
 import static net.fachtnaroe.gwlogin2023_fr.bits.dbg;
 
 import com.google.appinventor.components.runtime.Button;
@@ -29,7 +31,7 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
         VerticalArrangement gridCenter,  mainArrangement;;
         TextBox usernameBox;
         PasswordTextBox passwordBox, newPassBox1, newPassBox2;
-        Button btnAction;
+        Button btnAction, btnCloseAll;
         Label padTop, padBottom, padBetweenPasswordsAndButton, lblU, padBetween, lblP, padAboveLogin;
         Label lblTitleAtTop, gridPadLeft, getGridPadRight, lblNewPass1, lblNewPass2;
         Web webDeleteAC, webChangePW;
@@ -84,6 +86,7 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             usernameBox.BackgroundColor(colors.TEXTBOX_BACKGROUND);
             usernameBox.TextColor(colors.TEXTBOX_TEXT);
             usernameBox.Text("fachtna.roe@tcfe.ie");
+            usernameBox.Enabled(false);
 
             padBetween = new Label(gridCenter);
             padBetween.WidthPercent(gridCenterWidth);
@@ -153,6 +156,13 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
             btnAction.TextColor(colors.BUTTON_TEXT);
             btnAction.BackgroundColor(colors.BUTTON_BACKGROUND);
             btnAction.Enabled(false);
+
+            btnCloseAll = new Button(gridCenter);
+            btnCloseAll.WidthPercent(gridCenterWidth);
+            btnCloseAll.Text("Close Program");
+            btnCloseAll.TextColor(colors.BUTTON_TEXT);
+            btnCloseAll.BackgroundColor(colors.BUTTON_BACKGROUND);
+            btnCloseAll.Visible(false);
 
             padBottom = new Label(mainArrangement);
             padBottom.WidthPercent(100);
@@ -233,9 +243,36 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                             btnAction.Text(ui_txt.CONNECTION_SENDING);
                         }
                         catch (Exception e) {
-                                return false;
-                            }
+                            return false;
+                        }
                     }
+                }
+                else if ((component.equals(btnAction)) && (optionChangePW.Checked())) {
+                    if (!testPassword()) {
+                        announce.ShowAlert(ui_txt.PASSWORD_CONTENT);
+                        return true;
+                    }
+                    btnAction.Enabled(false);
+                    btnAction.Text(ui_txt.PROCESSING);
+                    if (bits.isValidEmailAddress(usernameBox.Text())) {
+                        try{
+                            jsonCredentials.put("action", "password");
+                            jsonCredentials.put("user", usernameBox.Text());
+                            jsonCredentials.put("oldpassword", passwordBox.Text());
+                            jsonCredentials.put("newpassword", lblNewPass1.Text());
+                            dbg("Sending: " + jsonCredentials.toString());
+                            String msg = jsonCredentials.toString();
+                            webDeleteAC.PostText(msg);
+                            btnAction.Text(ui_txt.CONNECTION_SENDING);
+                        }
+                        catch (Exception e) {
+                            return false;
+                        }
+                    }
+                }
+                else if (component.equals(btnCloseAll)) {
+                    this.finishApplication();
+                    System.exit(0);
                 }
                 else {
                     announce.ShowAlert(ui_txt.REGISTER_INVALID_EMAIL);
@@ -278,8 +315,34 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
                     }
                     return true;
                 }
-                else if() {
-
+                else if(component.equals(webDeleteAC)) {
+                    String status = params[1].toString();
+                    btnAction.Text(ui_txt.PROCESSING);
+                    String textOfResponse = (String) params[3];
+                    if (status.equals("200")) {
+                        try {
+                            JSONObject parser = new JSONObject(textOfResponse);
+                            if (parser.getString("status").equals("OK")) {
+                                EventDispatcher.unregisterEventForDelegation(this, formName, "BackPressed");
+                                announce.ShowAlert(ui_txt.CHANGE_DELETE_DONE);
+                                btnAction.Visible(false);
+                                btnCloseAll.Visible(true);
+                            }
+                            else {
+                                btnAction.Text(parser.getString("detail"));
+                                btnAction.Enabled(true);
+                            }
+                        }
+                        catch (JSONException e) {
+                            btnAction.Text("error connecting " + status);
+                            btnAction.Enabled(true);
+                        }
+                    }
+                    else {
+                        btnAction.Text("error connecting " + status);
+                        btnAction.Enabled(true);
+                    }
+                    return true;
                 }
 
             }
@@ -289,7 +352,11 @@ public class AccountAdminScreen extends Form implements HandlesEventDispatching 
         boolean testPassword(){
             final Integer min_pass=8, max_pass=32;
             dbg("Checking password validity");
-            String pw=passwordBox.Text();
+            if (!newPassBox1.Text().equals(newPassBox2.Text())) {
+                announce.ShowAlert(ui_txt.PASSWORD_MISMATCH);
+                return false;
+            }
+            String pw=newPassBox1.Text();
             pw=pw.stripLeading();
             pw=pw.stripTrailing();
             if ((pw.length()<min_pass) || (pw.length()>max_pass)) {
